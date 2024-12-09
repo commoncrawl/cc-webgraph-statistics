@@ -1,0 +1,144 @@
+html {
+    scroll-behavior: smooth;
+}
+div {
+    margin-bottom: 40px;
+}
+.full-width-image {
+    max-width: 100%;
+    border-radius: 8px;
+}
+img {
+    max-width: 90%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+a:not(footer a) {
+    font-weight: bold;
+    color: #192a45;
+    text-decoration: none;
+}
+a:not(footer a):hover {
+    text-decoration: underline;
+}
+hr {
+    border: none;
+    height: 1px;
+    background: #192a45;
+    margin: 20px 0;
+}
+.toc li a
+{
+    font-weight: normal;
+}
+.download-button {
+    margin-right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background-color: #1E2A47;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: normal;
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #16203B;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+.download-button:hover {
+    background-color: #fff;
+    color: #16203B;
+    border: 1px solid #16203B;
+    text-decoration: none;
+}
+.download-button i {
+    margin-right: 8px;
+    font-size: 18px;
+}
+.dropdown {
+    margin: 20px 0;
+}
+.dropdown select {
+    padding: 10px;
+    font-size: 16px;
+}
+.dropdown-content {
+    display: none;
+}
+.dropdown-content.active {
+    display: block;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+table, th, td {
+    border: 1px solid #ccc;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+.latex {
+    max-width: 90%;
+    display: flex;
+    gap: 20px;
+}
+.latex img {
+    width: 33%;
+    max-width: 240px;
+    height: auto;
+}
+pre {
+    color: #2077b4;
+    background: #f3f3f3;
+    padding: 20px;
+    border-radius: 6px;
+}
+.container {
+    display: flex;
+    align-items: center;/
+    justify-content: space-between;
+    gap: 20px;
+}
+.text-section {
+    flex: 1;
+    max-width: 33.33%;
+}
+.image-section {
+    flex: 2;
+}
+.tt-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+select {
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #111828;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #111828;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"%3E%3Cpath fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"%3E%3C/path%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+}
+select:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 86, 179, 0.3);
+}
+select:hover {
+  border-color: #666;
+}
