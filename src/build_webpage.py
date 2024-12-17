@@ -321,6 +321,17 @@ for col in descriptions.keys():
 
 html_content += """
             <div>
+                <h3 id='related-reading'><a href="#related-reading">Related Reading</a></h3>
+                <ul>
+                    <li>
+                        <a href='https://arxiv.org/pdf/2012.01946'>Can I Take Your Subdomain? Exploring Related-Domain Attacks in the Modern Web</a>
+                    </li>
+                    <li>
+                        <a href='https://arxiv.org/abs/1802.05435'>Analysis of the Web Graph Aggregated by Host and Pay-Level Domain</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
                 <h3>Credits</h3>
                 <ul>
                     <li>
