@@ -141,7 +141,7 @@ html_content = """
     <title>Web Graph Statistics</title>
     <link rel="stylesheet" href="https://data.commoncrawl.org/static/bucket.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <style>
@@ -340,7 +340,7 @@ html_content += """
             </div>
             <a href="#">Back to Top...</a>
             <footer>
-                <hr/>
+                <hr>
                 <p>
                     <a href="https://commoncrawl.org/">Common Crawl</a> is a California 501(c)(3) registered non-profit organization.
                     Hosting of <a href="https://commoncrawl.org/the-data/">Common Crawl data</a> is covered by
