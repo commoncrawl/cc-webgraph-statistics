@@ -181,7 +181,7 @@ html_content += f"""
 """
 
 html_content += """
-    <img class="full-width-image" src="img/masthead.webp">
+    <img class="full-width-image" src="img/masthead.webp" alt="decorative">
 """
 
 html_content += embed_markdown_file("description.md", "Description")
@@ -192,8 +192,7 @@ for file_type in ['domain', 'host']:
 
     html_content += f'<span style="font-weight: bold">{file_type.capitalize()}</span>'
     html_content += f'<div class="dropdown">'
-    # html_content += f'<label for="{file_type}-release-dropdown">Select a Release:</label>&nbsp;&nbsp;'
-    html_content += f'<select id="{file_type}-release-dropdown">'
+    html_content += f'<select id="{file_type}-release-dropdown">\n'
     html_content += '<option value="">Choose a release...</option>'
 
     releases = combined_data['release'].unique()
@@ -201,7 +200,7 @@ for file_type in ['domain', 'host']:
 
     for release in reversed(releases):
         release_str = str(release)
-        html_content += f'<option value="dropdown-{file_type}-{release_str}">{release_str}</option>'
+        html_content += f'<option value="dropdown-{file_type}-{release_str}">{release_str}</option>\n'
     html_content += '</select>'
     html_content += '</div>'
 
@@ -224,12 +223,6 @@ for file_type in ['domain', 'host']:
 
 releases = combined_data['release'].unique()
 release_entries = fetch_top_entries(releases, 'domain')
-
-for release in reversed(releases):
-    release_str = str(release)
-    html_content += f'<option value="dropdown-{release_str}">{release_str}</option>'
-html_content += '</select>'
-html_content += '</div>'
 
 for release in releases:
     release_str = str(release)
@@ -345,7 +338,7 @@ html_content += """
                     </li>
                 </ul>
             </div>
-            <a href="#">Back to Top...<a>
+            <a href="#">Back to Top...</a>
             <footer>
                 <hr/>
                 <p>
