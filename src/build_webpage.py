@@ -209,17 +209,17 @@ for file_type in ['domain', 'host']:
         top_entries = release_entries[release_str]
         html_content += f'<div class="dropdown-content" id="dropdown-{file_type}-{release_str}">'
         if top_entries:
-            html_content += '<table>'
-            html_content += '<thead><tr>'
-            html_content += ''.join(f'<th>{col}</th>' for col in top_entries[0])
-            html_content += '</tr></thead>'
-            html_content += '<tbody>'
+            html_content += '<table>\n'
+            html_content += '<thead><tr>\n'
+            html_content += ''.join(f'<th>{col}</th>\n' for col in top_entries[0])
+            html_content += '</tr></thead>\n'
+            html_content += '<tbody>\n'
             for row in top_entries[1:]:
-                html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>'
-            html_content += '</tbody></table>'
+                html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>\n'
+            html_content += '</tbody></table>\n'
         else:
-            html_content += '<p>No data available.</p>'
-        html_content += '</div>'
+            html_content += '<p>No data available.</p>\n'
+        html_content += '</div>\n'
 
 releases = combined_data['release'].unique()
 release_entries = fetch_top_entries(releases, 'domain')
@@ -227,19 +227,19 @@ release_entries = fetch_top_entries(releases, 'domain')
 for release in releases:
     release_str = str(release)
     top_entries = release_entries[release_str]
-    html_content += f'<div class="dropdown-content" id="dropdown-{release_str}">'
+    html_content += f'<div class="dropdown-content" id="dropdown-{release_str}">\n'
     if top_entries:
-        html_content += '<table>'
-        html_content += '<thead><tr>'
-        html_content += ''.join(f'<th>{col}</th>' for col in top_entries[0])
-        html_content += '</tr></thead>'
-        html_content += '<tbody>'
+        html_content += '<table>\n'
+        html_content += '<thead><tr>\n'
+        html_content += ''.join(f'<th>{col}</th>\n' for col in top_entries[0])
+        html_content += '</tr></thead>\n'
+        html_content += '<tbody>\n'
         for row in top_entries[1:]:
-            html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>'
-        html_content += '</tbody></table>'
+            html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>\n'
+        html_content += '</tbody></table>\n'
     else:
-        html_content += '<p>No data available.</p>'
-    html_content += '</div>'
+        html_content += '<p>No data available.</p>\n'
+    html_content += '</div>\n'
 
 html_content += "<p>These ranks can be found by running the following:</p>"
 
@@ -254,11 +254,11 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \\
         | head -n 11
 </code></pre>"""
 
-html_content += "<p>The entire file is multiple GiB, so piping to <code>zcat</code> allows you to get just the top of it without downloading the whole thing. If that's not available on your system, you could use <code>gunzip</code> instead.</p>"
+html_content += "<p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>\n"
 
-html_content += '<div><h4>What Are These Ranks?</h4>'
+html_content += '<div><h4>What Are These Ranks?</h4>\n'
 
-html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank'>Harmonic Centrality</a> (that's the equation below and on the <i>left</i>) considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank'>HyperBall</a>.</p>"
+html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank'>Harmonic Centrality</a> (that's the equation below and on the <i>left</i>) considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank'>HyperBall</a>.</p>\n"
 
 html_content += """<div class="latex">
   <img src="img/harmcen.svg" alt="Harmonic Centrality equation">
@@ -266,24 +266,24 @@ html_content += """<div class="latex">
 </div>
 """
 
-html_content += "<p>With <a href ='https://en.wikipedia.org/wiki/PageRank' target='_blank'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank'>PageRankParallelGaussSeidel</a>.</p>"
+html_content += "<p>With <a href ='https://en.wikipedia.org/wiki/PageRank' target='_blank'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank'>PageRankParallelGaussSeidel</a>.</p>\n"
 
-html_content += "<p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>"
+html_content += "<p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>\n"
 
-html_content += '<h2>Statistics Plots</h2>'
+html_content += '<h2>Statistics Plots</h2>\n'
 
-html_content += '<div class="toc"><ul>'
+html_content += '<div class="toc">\n<ul>\n'
 
 for col in descriptions.keys():
-    html_content += f'<li><a href="#{col}">{col}</a></li>'
-html_content += '</ul></div>'
+    html_content += f'<li><a href="#{col}">{col}</a></li>\n'
+html_content += '</ul>\n</div>\n'
 
-html_content += '<p>The following plots are of Web Graph <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html" target="_blank">statistics</a> for all previous releases.</p>'
+html_content += '<p>The following plots are of Web Graph <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html" target="_blank">statistics</a> for all previous releases.</p>\n'
 
-html_content += '<div class="download"><h2>Download Data</h2>'
-html_content += '<a href="domain.tsv" download class="download-button"><i class="fas fa-download"></i>domain.tsv</a>'
-html_content += '<a href="host.tsv" download class="download-button"><i class="fas fa-download"></i>host.tsv</a>'
-html_content += '</div>'
+html_content += '<div class="download"><h2>Download Data</h2>\n'
+html_content += '<a href="domain.tsv" download class="download-button"><i class="fas fa-download"></i>domain.tsv</a>\n'
+html_content += '<a href="host.tsv" download class="download-button"><i class="fas fa-download"></i>host.tsv</a>\n'
+html_content += '</div>\n'
 
 for col in descriptions.keys():
     file_name = f"{col}.png"
