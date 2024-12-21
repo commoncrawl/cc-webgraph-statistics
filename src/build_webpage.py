@@ -129,7 +129,7 @@ combined_data['release'] = pd.Categorical(
 plot_files = generate_plots(combined_data)
 
 last_updated = datetime.datetime.now().strftime("%Y-%m-%d")
-latest_release = combined_data['release'].astype(str).max()
+latest_release = combined_data['release'].iloc[-1]
 latest_release_url = f"https://data.commoncrawl.org/projects/hyperlinkgraph/{latest_release}/index.html"
 
 html_content = """
