@@ -1,4 +1,4 @@
-# cc-web-graph-statistics
+# cc-webgraph-statistics
 
 ![image](docs/img/masthead.webp)
 
