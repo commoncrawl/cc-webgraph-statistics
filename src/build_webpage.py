@@ -25,7 +25,7 @@ def fetch_top_entries(releases, file_type="host"):
             else:
                 url = f"https://data.commoncrawl.org/projects/hyperlinkgraph/{release}/{file_type}/{release}-{file_type}-ranks.txt.gz"
                 try:
-                    result = subprocess.check_output(f"curl -s {url} | zcat | head -n 11", shell=True, text=True)
+                    result = subprocess.check_output(f"sleep 2 && curl -s {url} | zcat | head -n 1001", shell=True, text=True)
                     with open(cache_file, "w") as f:
                         f.write(result)
                     release_entries[release] = [line.split() for line in result.strip().split("\n")]
@@ -179,6 +179,15 @@ html_content += """
         }
         document.addEventListener("DOMContentLoaded", setupDropdownHandlers);
     </script>
+"""
+html_content += """
+    <script>
+"""
+html_content += embed_file('pagination.js')
+html_content += """
+    </script>
+"""
+html_content += """
 </head>
 <body>
 <h1>Web Graph Statistics</h1>
@@ -197,7 +206,7 @@ html_content += """
 
 html_content += embed_markdown_file("description.md", "Description")
 
-html_content += '<h2>Top Ten Ranks</h2>'
+html_content += '<h2>Top 1000 Ranks</h2>'
 
 for file_type in ['domain', 'host']:
 
@@ -236,21 +245,23 @@ releases = combined_data['release'].unique()
 release_entries = fetch_top_entries(releases, 'domain')
 
 for release in releases:
-    release_str = str(release)
-    top_entries = release_entries[release_str]
-    html_content += f'<div class="dropdown-content" id="dropdown-{release_str}">\n'
-    if top_entries:
-        html_content += '<table>\n'
-        html_content += '<thead><tr>\n'
-        html_content += ''.join(f'<th>{col}</th>\n' for col in top_entries[0])
-        html_content += '</tr></thead>\n'
-        html_content += '<tbody>\n'
-        for row in top_entries[1:]:
-            html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>\n'
-        html_content += '</tbody></table>\n'
-    else:
-        html_content += '<p>No data available.</p>\n'
-    html_content += '</div>\n'
+  release_str = str(release)
+  top_entries = release_entries[release_str]
+  html_content += f'<div class="dropdown-content" id="dropdown-{file_type}-{release_str}">'
+  if top_entries:
+      html_content += '<div class="table-with-pagination">\n'
+      html_content += '<table>\n'
+      html_content += '<thead><tr>\n'
+      html_content += ''.join(f'<th>{col}</th>\n' for col in top_entries[0])
+      html_content += '</tr></thead>\n'
+      html_content += '<tbody>\n'
+      for row in top_entries[1:]:
+          html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>\n'
+      html_content += '</tbody></table>\n'
+      html_content += '</div>\n'
+  else:
+      html_content += '<p>No data available.</p>\n'
+  html_content += '</div>\n'
 
 html_content += "<p>These ranks can be found by running the following:</p>"
 
@@ -258,11 +269,11 @@ html_content += """<pre><code class="bash"># Define environment variables for re
 export RELEASE="{release}"  # Desired release (e.g., cc-main-2017-18-nov-dec-jan)
 export GRAPH_LEVEL="{graph_level}"  # Desired graph level (e.g., domain or host)
 
-# Fetch the top 10 ranks for the specified release and graph level
+# Fetch the top 1000 ranks for the specified release and graph level
 curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \\
         $GRAPH_LEVEL/$RELEASE-$GRAPH_LEVEL-ranks.txt.gz \\
         | zcat \\
-        | head -n 11
+        | head -n 1001
 </code></pre>"""
 
 html_content += "<p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>\n"
@@ -362,6 +373,12 @@ html_content += """
                     <a href="https://commoncrawl.org/privacy-policy" target="_blank">Privacy</a>
                 </p>
             </footer>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    setupPagination();
+                    setupDropdownHandlers();
+                });
+            </script>
         </body>
         </html>
 """

@@ -142,3 +142,46 @@ select:focus {
 select:hover {
   border-color: #666;
 }
+.pagination-controls {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.pagination-controls button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+.pagination-controls button:hover:not([disabled]) {
+    background: #f0f0f0;
+    border-color: #ccc;
+}
+.pagination-controls button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.pagination-controls .page-info {
+    font-size: 14px;
+    color: #666;
+}
+th {
+    transition: background-color 0.2s;
+    position: relative;
+}
+th:hover {
+    background-color: #f0f0f0;
+}
+th[data-sort="asc"]::after {
+    content: " ▲";
+    color: #666;
+}
+th[data-sort="desc"]::after {
+    content: " ▼";
+    color: #666;
+}
