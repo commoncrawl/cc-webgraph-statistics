@@ -11,9 +11,21 @@ function setupPagination() {
         const thead = table.querySelector('thead');
         if (!tbody || !thead) return;
 
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'search-container';
+        searchContainer.innerHTML = `
+            <input type="text" class="search-input" placeholder="Search table...">
+            <div class="search-count"></div>
+        `;
+        table.parentNode.insertBefore(searchContainer, table);
+
+        const searchInput = searchContainer.querySelector('.search-input');
+        const searchCount = searchContainer.querySelector('.search-count');
+
         const rows = Array.from(tbody.querySelectorAll('tr'));
         const rowsPerPage = 10;
-        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        let filteredRows = rows;
+        let currentPage = 1;
 
         const headers = thead.querySelectorAll('th');
         headers.forEach((header, index) => {
@@ -31,8 +43,7 @@ function setupPagination() {
                 const newSort = currentSort === 'asc' ? 'desc' : 'asc';
                 header.setAttribute('data-sort', newSort);
 
-                const rows = Array.from(tbody.querySelectorAll('tr'));
-                rows.sort((rowA, rowB) => {
+                filteredRows.sort((rowA, rowB) => {
                     const cellA = rowA.cells[index].textContent.trim();
                     const cellB = rowB.cells[index].textContent.trim();
 
@@ -48,48 +59,82 @@ function setupPagination() {
                     }
                 });
 
-                rows.forEach(row => tbody.appendChild(row));
+                filteredRows.forEach(row => tbody.appendChild(row));
 
-                showPage(currentPage);
+                showPage(1);
             });
         });
 
-        if (totalPages <= 1) return;
+        function filterRows(searchTerm) {
+            if (!searchTerm) {
+                filteredRows = rows;
+                searchCount.textContent = '';
+            } else {
+                searchTerm = searchTerm.toLowerCase();
+                filteredRows = rows.filter(row => {
+                    return Array.from(row.cells).some(cell =>
+                        cell.textContent.toLowerCase().includes(searchTerm)
+                    );
+                });
+                searchCount.textContent = `${filteredRows.length} matches`;
+            }
 
-        const controls = document.createElement('div');
-        controls.className = 'pagination-controls';
-        controls.innerHTML = `
-            <button class="prev-btn" disabled>&laquo; Previous</button>
-            <span class="page-info">Page <span class="current-page">1</span> of ${totalPages}</span>
-            <button class="next-btn">Next &raquo;</button>
-        `;
+            rows.forEach(row => row.style.display = 'none');
 
-        table.parentNode.insertBefore(controls, table.nextSibling);
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            if (controls) {
+                controls.querySelector('.total-pages').textContent = totalPages;
+            }
 
-        let currentPage = 1;
+            showPage(1);
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            filterRows(e.target.value);
+        });
+
+        let controls = null;
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+        if (totalPages > 1) {
+            controls = document.createElement('div');
+            controls.className = 'pagination-controls';
+            controls.innerHTML = `
+                <button class="prev-btn" disabled>&laquo; Previous</button>
+                <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">${totalPages}</span></span>
+                <button class="next-btn">Next &raquo;</button>
+            `;
+
+            table.parentNode.insertBefore(controls, table.nextSibling);
+
+            controls.querySelector('.prev-btn').addEventListener('click', () => {
+                if (currentPage > 1) showPage(currentPage - 1);
+            });
+
+            controls.querySelector('.next-btn').addEventListener('click', () => {
+                const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+                if (currentPage < totalPages) showPage(currentPage + 1);
+            });
+        }
 
         function showPage(page) {
-            const rows = Array.from(tbody.querySelectorAll('tr'));
             const start = (page - 1) * rowsPerPage;
             const end = start + rowsPerPage;
 
-            rows.forEach((row, index) => {
-                row.style.display = (index >= start && index < end) ? '' : 'none';
+            rows.forEach(row => row.style.display = 'none');
+
+            filteredRows.slice(start, end).forEach(row => {
+                row.style.display = '';
             });
 
             currentPage = page;
-            controls.querySelector('.current-page').textContent = page;
-            controls.querySelector('.prev-btn').disabled = page === 1;
-            controls.querySelector('.next-btn').disabled = page === totalPages;
+
+            if (controls) {
+                controls.querySelector('.current-page').textContent = page;
+                controls.querySelector('.prev-btn').disabled = page === 1;
+                controls.querySelector('.next-btn').disabled = page === Math.ceil(filteredRows.length / rowsPerPage);
+            }
         }
-
-        controls.querySelector('.prev-btn').addEventListener('click', () => {
-            if (currentPage > 1) showPage(currentPage - 1);
-        });
-
-        controls.querySelector('.next-btn').addEventListener('click', () => {
-            if (currentPage < totalPages) showPage(currentPage + 1);
-        });
 
         table.setAttribute('data-pagination-initialized', 'true');
 

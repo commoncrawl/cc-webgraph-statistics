@@ -185,3 +185,25 @@ th[data-sort="desc"]::after {
     content: " ▼";
     color: #666;
 }
+.search-container {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 1rem;
+}
+.search-input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    flex-grow: 1;
+    max-width: 300px;
+}
+.search-input:focus {
+    outline: none;
+    border-color: #999;
+}
+.search-count {
+    color: #666;
+    font-size: 14px;
+}
