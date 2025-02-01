@@ -44,6 +44,7 @@ def has_zero_signal(series):
 
 
 def generate_plots(data):
+    excluded = ['maxindegreenode','maxoutdegreenode','minindegreenode','minoutdegreenode']
     plot_files = []
     colors = {
         "domain": "#f8766d",
@@ -51,7 +52,7 @@ def generate_plots(data):
     }
     with tqdm(data.columns, desc="Checking for plots", leave=False, dynamic_ncols=True) as progress_bar:
         for col in progress_bar:
-            if col not in ["release", "source"] and not has_comma_separated_values(data[col]) and not has_zero_signal(data[col]):
+            if col not in ["release", "source"] and not has_comma_separated_values(data[col]) and not has_zero_signal(data[col]) and col not in excluded:
                 file_name = f"{col}.png"
                 file_path = f"../docs/plots/{file_name}"
                 if args.no_plots and os.path.exists(file_path):
