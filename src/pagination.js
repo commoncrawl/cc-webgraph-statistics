@@ -1,154 +1,152 @@
 function setupPagination() {
-    const activeDropdowns = document.querySelectorAll('.dropdown-content.active');
-
-    activeDropdowns.forEach(dropdown => {
+    function setupTable(dropdown) {
         const table = dropdown.querySelector('table');
-        if (!table) return;
+        if (!table || table.getAttribute('data-pagination-initialized')) return;
 
-        if (table.getAttribute('data-pagination-initialized')) return;
-
+        // Get initial rows but don't process them all immediately
         const tbody = table.querySelector('tbody');
-        const thead = table.querySelector('thead');
-        if (!tbody || !thead) return;
+        const rowsList = Array.from(tbody.children);
+        let displayedRows = rowsList;
+        let currentPage = 1;
+        const rowsPerPage = 10;
 
+        // Add search box
         const searchContainer = document.createElement('div');
         searchContainer.className = 'search-container';
         searchContainer.innerHTML = `
             <input type="text" class="search-input" placeholder="Search table...">
-            <div class="search-count"></div>
+            <span class="search-count"></span>
         `;
         table.parentNode.insertBefore(searchContainer, table);
 
-        const searchInput = searchContainer.querySelector('.search-input');
-        const searchCount = searchContainer.querySelector('.search-count');
+        // Add pagination controls
+        const controls = document.createElement('div');
+        controls.className = 'pagination-controls';
+        controls.innerHTML = `
+            <button class="prev-btn" disabled>&laquo;</button>
+            <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
+            <button class="next-btn">&raquo;</button>
+        `;
+        table.parentNode.insertBefore(controls, table.nextSibling);
 
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        const rowsPerPage = 10;
-        let filteredRows = rows;
-        let currentPage = 1;
+        const elements = {
+            searchInput: searchContainer.querySelector('.search-input'),
+            searchCount: searchContainer.querySelector('.search-count'),
+            prevBtn: controls.querySelector('.prev-btn'),
+            nextBtn: controls.querySelector('.next-btn'),
+            currentPage: controls.querySelector('.current-page'),
+            totalPages: controls.querySelector('.total-pages')
+        };
 
-        const headers = thead.querySelectorAll('th');
-        headers.forEach((header, index) => {
-            header.style.cursor = 'pointer';
-            header.setAttribute('data-sort', 'none');
-
-            header.addEventListener('click', () => {
-                headers.forEach(h => {
-                    if (h !== header) {
-                        h.setAttribute('data-sort', 'none');
-                    }
-                });
-
-                const currentSort = header.getAttribute('data-sort');
-                const newSort = currentSort === 'asc' ? 'desc' : 'asc';
-                header.setAttribute('data-sort', newSort);
-
-                filteredRows.sort((rowA, rowB) => {
-                    const cellA = rowA.cells[index].textContent.trim();
-                    const cellB = rowB.cells[index].textContent.trim();
-
-                    const numA = parseFloat(cellA);
-                    const numB = parseFloat(cellB);
-
-                    if (!isNaN(numA) && !isNaN(numB)) {
-                        return newSort === 'asc' ? numA - numB : numB - numA;
-                    } else {
-                        return newSort === 'asc' ?
-                            cellA.localeCompare(cellB) :
-                            cellB.localeCompare(cellA);
-                    }
-                });
-
-                filteredRows.forEach(row => tbody.appendChild(row));
-
-                showPage(1);
-            });
-        });
-
-        function filterRows(searchTerm) {
-            if (!searchTerm) {
-                filteredRows = rows;
-                searchCount.textContent = '';
-            } else {
-                searchTerm = searchTerm.toLowerCase();
-                filteredRows = rows.filter(row => {
-                    return Array.from(row.cells).some(cell =>
-                        cell.textContent.toLowerCase().includes(searchTerm)
-                    );
-                });
-                searchCount.textContent = `${filteredRows.length} matches`;
-            }
-
-            rows.forEach(row => row.style.display = 'none');
-
-            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-            if (controls) {
-                controls.querySelector('.total-pages').textContent = totalPages;
-            }
-
-            showPage(1);
-        }
-
-        searchInput.addEventListener('input', (e) => {
-            filterRows(e.target.value);
-        });
-
-        let controls = null;
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-
-        if (totalPages > 1) {
-            controls = document.createElement('div');
-            controls.className = 'pagination-controls';
-            controls.innerHTML = `
-                <button class="prev-btn" disabled>&laquo; Previous</button>
-                <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">${totalPages}</span></span>
-                <button class="next-btn">Next &raquo;</button>
-            `;
-
-            table.parentNode.insertBefore(controls, table.nextSibling);
-
-            controls.querySelector('.prev-btn').addEventListener('click', () => {
-                if (currentPage > 1) showPage(currentPage - 1);
-            });
-
-            controls.querySelector('.next-btn').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-                if (currentPage < totalPages) showPage(currentPage + 1);
-            });
-        }
-
-        function showPage(page) {
-            const start = (page - 1) * rowsPerPage;
+        // Function to show current page
+        function updateDisplay() {
+            const totalPages = Math.ceil(displayedRows.length / rowsPerPage);
+            const start = (currentPage - 1) * rowsPerPage;
             const end = start + rowsPerPage;
 
-            rows.forEach(row => row.style.display = 'none');
+            // Hide all rows
+            rowsList.forEach(row => row.style.display = 'none');
 
-            filteredRows.slice(start, end).forEach(row => {
-                row.style.display = '';
-            });
+            // Show only current page rows
+            displayedRows.slice(start, end).forEach(row => row.style.display = '');
 
-            currentPage = page;
-
-            if (controls) {
-                controls.querySelector('.current-page').textContent = page;
-                controls.querySelector('.prev-btn').disabled = page === 1;
-                controls.querySelector('.next-btn').disabled = page === Math.ceil(filteredRows.length / rowsPerPage);
-            }
+            // Update controls
+            elements.currentPage.textContent = currentPage;
+            elements.totalPages.textContent = totalPages;
+            elements.prevBtn.disabled = currentPage === 1;
+            elements.nextBtn.disabled = currentPage === totalPages;
         }
 
-        table.setAttribute('data-pagination-initialized', 'true');
+        // Sorting functionality
+        table.querySelectorAll('th').forEach((th, index) => {
+            th.style.cursor = 'pointer';
+            th.addEventListener('click', () => {
+                // Remove sort indicators from other columns
+                table.querySelectorAll('th').forEach(header => {
+                    if (header !== th) header.removeAttribute('data-sort');
+                });
 
-        showPage(1);
-    });
+                // Toggle sort direction
+                const currentSort = th.getAttribute('data-sort');
+                const newSort = currentSort === 'asc' ? 'desc' : 'asc';
+                th.setAttribute('data-sort', newSort);
+
+                // Sort rows
+                displayedRows.sort((a, b) => {
+                    const aVal = a.cells[index].textContent.trim();
+                    const bVal = b.cells[index].textContent.trim();
+
+                    // Try numeric sort first
+                    const aNum = parseFloat(aVal);
+                    const bNum = parseFloat(bVal);
+                    if (!isNaN(aNum) && !isNaN(bNum)) {
+                        return newSort === 'asc' ? aNum - bNum : bNum - aNum;
+                    }
+                    // Fall back to string sort
+                    return newSort === 'asc' ?
+                        aVal.localeCompare(bVal) :
+                        bVal.localeCompare(aVal);
+                });
+
+                currentPage = 1;
+                updateDisplay();
+            });
+        });
+
+        // Search functionality with debounce
+        let searchTimeout = null;
+        elements.searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = elements.searchInput.value.toLowerCase();
+                if (!searchTerm) {
+                    displayedRows = rowsList;
+                    elements.searchCount.textContent = '';
+                } else {
+                    displayedRows = rowsList.filter(row =>
+                        Array.from(row.cells).some(cell =>
+                            cell.textContent.toLowerCase().includes(searchTerm)
+                        )
+                    );
+                    elements.searchCount.textContent = `${displayedRows.length} matches`;
+                }
+                currentPage = 1;
+                updateDisplay();
+            }, 300);
+        });
+
+        // Pagination event handlers
+        elements.prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                updateDisplay();
+            }
+        });
+
+        elements.nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(displayedRows.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateDisplay();
+            }
+        });
+
+        // Initialize display
+        table.setAttribute('data-pagination-initialized', 'true');
+        updateDisplay();
+    }
+
+    // Process each active dropdown
+    document.querySelectorAll('.dropdown-content.active').forEach(setupTable);
 }
 
+// Setup when dropdown changes
 function onDropdownChange() {
     setTimeout(setupPagination, 50);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const dropdowns = document.querySelectorAll('select[id$="-release-dropdown"]');
-    dropdowns.forEach(dropdown => {
-        dropdown.addEventListener('change', onDropdownChange);
-    });
+// Initial setup
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('select[id$="-release-dropdown"]')
+        .forEach(dropdown => dropdown.addEventListener('change', onDropdownChange));
 });
