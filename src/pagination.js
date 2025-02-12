@@ -72,13 +72,16 @@ function setupPagination() {
                 th.setAttribute('data-sort', newSort);
 
                 // Sort rows
-                displayedRows.sort((a, b) => {
+                let targetRows = displayedRows.length > 0 ? displayedRows : rowsList;
+
+                targetRows.sort((a, b) => {
                     const aVal = a.cells[index].textContent.trim();
                     const bVal = b.cells[index].textContent.trim();
 
                     // Try numeric sort first
-                    const aNum = parseFloat(aVal);
-                    const bNum = parseFloat(bVal);
+                    const aNum = parseFloat(aVal.replace(/,/g, ''));
+                    const bNum = parseFloat(bVal.replace(/,/g, ''));
+
                     if (!isNaN(aNum) && !isNaN(bNum)) {
                         return newSort === 'asc' ? aNum - bNum : bNum - aNum;
                     }
@@ -88,6 +91,10 @@ function setupPagination() {
                         bVal.localeCompare(aVal);
                 });
 
+                tbody.innerHTML = "";
+                targetRows.forEach(row => tbody.appendChild(row));
+
+                displayedRows = [...targetRows];
                 currentPage = 1;
                 updateDisplay();
             });
