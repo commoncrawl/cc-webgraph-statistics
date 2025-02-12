@@ -44,11 +44,17 @@ def has_zero_signal(series):
 
 
 def generate_plots(data):
-    excluded = ['maxindegreenode','maxoutdegreenode','minindegreenode','minoutdegreenode']
+    excluded = [
+        'maxindegreenode',
+        'maxoutdegreenode',
+        'minindegreenode',
+        'minoutdegreenode',
+        'terminal'
+    ]
     plot_files = []
     colors = {
         "domain": "#f8766d",
-        "host": "#1f77b4",
+        "host": "#1f77b4"
     }
     with tqdm(data.columns, desc="Checking for plots", leave=False, dynamic_ncols=True) as progress_bar:
         for col in progress_bar:
@@ -88,7 +94,7 @@ def embed_markdown_file(file_path, heading=''):
             <h3>{heading}</h3>
             {html_content}
         </div>
-        """
+"""
     except Exception as e:
         print(f"Error reading {file_path}: {e}")
         exit(1)
@@ -323,7 +329,7 @@ for col in descriptions.keys():
             </a>
             <p>{description}</p>
         </div>
-        """
+"""
     else:
         html_content += f"""
         <div class="chart-container">
@@ -333,7 +339,7 @@ for col in descriptions.keys():
             <p><i>No plot available for this attribute.</i></p>
             <p>{description}</p>
         </div>
-        """
+"""
 
 html_content += """
             <div>
