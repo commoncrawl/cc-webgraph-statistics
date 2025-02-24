@@ -213,7 +213,7 @@ html_content += """
 
 html_content += embed_markdown_file("description.md", "Description")
 
-html_content += '<h2>Top 1000 Ranks</h2>'
+html_content += '<h2 id="Top-1000-Ranks">Top 1000 Ranks</h2>'
 
 for file_type in ['domain', 'host']:
 
@@ -285,7 +285,7 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \\
 
 html_content += "<p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>\n"
 
-html_content += '<div><h4>What Are These Ranks?</h4>\n'
+html_content += '<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>\n'
 
 html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank'>Harmonic Centrality</a> (that's the equation below and on the <i>left</i>) considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank'>HyperBall</a>.</p>\n"
 
@@ -299,7 +299,7 @@ html_content += "<p>With <a href ='https://en.wikipedia.org/wiki/PageRank' targe
 
 html_content += "<p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>\n"
 
-html_content += '<h2>Statistics Plots</h2>\n'
+html_content += '<h2 id="Statistics-Plots">Statistics Plots</h2>\n'
 
 html_content += '<div class="toc">\n<ul>\n'
 
