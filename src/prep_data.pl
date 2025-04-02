@@ -27,6 +27,7 @@ sub arrays_equal
 sub readstats
 {
     my ( $file, $type, $release )  = @_;
+    $release =~ s/-host(?:graph)?$//;
     open( my $fh, '<', $file ) or die "Could not open file '$file' $!";
     my @h;
     my @l;
@@ -44,7 +45,7 @@ sub readstats
     close $fh;
     if ( !arrays_equal( \@h, \@headers ) )
     {
-        die 'Schema changed' if scalar @headers > 0;
+        print STDERR 'Schema changed\n' if scalar @headers > 0;
         @headers = @h;
     }
     push @{ $lines->{ $type } }, join "\t", @l;
@@ -52,16 +53,27 @@ sub readstats
 
 sub fetch_stats
 {
-    my ( $release ) = @_;
-    my $p = 'aws s3 cp s3://commoncrawl/projects/hyperlinkgraph';
-    my @commands = (
-        "$p/$release/host/$release-host.stats cache/host/ ",
-        "$p/$release/domain/$release-domain.stats cache/domain/ "
-    );
-    for my $command ( @commands )
+    my ( $release, $type ) = @_;
+    my $base_url = "https://data.commoncrawl.org/projects/hyperlinkgraph";
+    my $url = "$base_url/$release/$type/$release-$type.stats";
+    my $local_cache_file = "cache/$type/$release-$type.stats";
+    # these are different
+    if ($release eq 'cc-main-2017-aug-sep-oct'
+        || $release eq 'cc-main-2017-may-jun-jul')
     {
-        system( $command . '>/dev/null 2>&1' ) == 0 or die "Command failed: $command\n";
+        $url = "$base_url/$release/${type}graph/bvgraph.stats";
     }
+    elsif ($release eq 'cc-main-2017-feb-mar-apr-hostgraph')
+    {
+        $url = "$base_url/$release/bvgraph.stats";
+        $local_cache_file = "cache/$type/cc-main-2017-feb-mar-apr-host.stats";
+    }
+    print "Fetching $url -> $local_cache_file\n";
+    my $ua = LWP::UserAgent->new;
+    my $response = $ua->get($url);
+    die "Failed to fetch $url: ", $response->status_line unless $response->is_success;
+    open(CACHE, ">", $local_cache_file);
+    print CACHE $response->decoded_content;
 }
 
 my $url = 'https://index.commoncrawl.org/graphinfo.json';
@@ -76,15 +88,15 @@ my $stats;
 
 for my $release ( reverse @releases )
 {
-    # these are different
-    next if $release eq 'cc-main-2017-aug-sep-oct'
-         || $release eq 'cc-main-2017-may-jun-jul'
-         || $release eq 'cc-main-2017-feb-mar-apr-hostgraph';
-
     for my $type ( 'host', 'domain' )
     {
         my $file = "cache/$type/$release-$type.stats";
-        fetch_stats( $release ) if ( !-e $file );
+        if ($release eq 'cc-main-2017-feb-mar-apr-hostgraph')
+        {
+            next if $type ne 'host';
+            $file = "cache/$type/cc-main-2017-feb-mar-apr-host.stats";
+        }
+        fetch_stats( $release, $type ) if ( !-e $file );
         $stats->{ $release }->{ $type } = readstats( $file, $type, $release );
     }
 }

@@ -17,6 +17,11 @@ def fetch_top_entries(releases, file_type="host"):
 
     with tqdm(releases, desc=f"Fetching top {file_type}s", leave=False) as progress_bar:
         for release in progress_bar:
+            if release in {'cc-main-2017-aug-sep-oct',
+                           'cc-main-2017-may-jun-jul',
+                           'cc-main-2017-feb-mar-apr-hostgraph'}:
+                release_entries[release] = []
+                continue
             cache_file = f"{cache_dir}/{release}-{file_type}-top-entries.txt"
             if os.path.exists(cache_file):
                 with open(cache_file, "r") as f:
@@ -125,7 +130,7 @@ host_data = pd.read_csv("../docs/host.tsv", sep="\t")
 domain_data['source'] = 'domain'
 host_data['source'] = 'host'
 
-combined_data = pd.concat([domain_data, host_data], ignore_index=True)
+combined_data = pd.concat([host_data, domain_data], ignore_index=True)
 
 combined_data['release'] = pd.Categorical(
     combined_data['release'],
