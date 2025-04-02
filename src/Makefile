@@ -15,6 +15,7 @@ all: install build update
 .PHONY: install
 install:
 	printf "$(PREF)Preparing data and directory structure...\n" && \
+	mkdir -p cache/host cache/domain && \
 	perl prep_data.pl && \
 	printf "$(PREF)Preparing TSV data...\n" && \
 	perl prep_data.pl host > ../docs/host.tsv && \
