@@ -45,7 +45,7 @@ sub readstats
     close $fh;
     if ( !arrays_equal( \@h, \@headers ) )
     {
-        print STDERR 'Schema changed\n' if scalar @headers > 0;
+        print STDERR "Schema changed\n" if scalar @headers > 0;
         @headers = @h;
     }
     push @{ $lines->{ $type } }, join "\t", @l;
