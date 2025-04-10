@@ -19,7 +19,7 @@ def fetch_top_entries(releases, file_type="host"):
         for release in progress_bar:
             if release in {'cc-main-2017-aug-sep-oct',
                            'cc-main-2017-may-jun-jul',
-                           'cc-main-2017-feb-mar-apr-hostgraph'}:
+                           'cc-main-2017-feb-mar-apr'}:
                 release_entries[release] = []
                 continue
             cache_file = f"{cache_dir}/{release}-{file_type}-top-entries.txt"
