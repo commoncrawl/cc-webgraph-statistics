@@ -84,7 +84,7 @@ def generate_plots(data):
                         + scale_y_continuous(labels=lambda l: [f'{v:.1e}' for v in l])
                         + scale_color_manual(values=colors)
                     )
-                    plot.save(file_path, width=10, height=6, dpi=300)
+                    plot.save(file_path, width=10, height=6, dpi=150)
                     plot_files.append((col, file_name))
     return plot_files
 
@@ -359,7 +359,7 @@ html_content += """
                 </ul>
             </div>
             <div>
-                <h3>Credits</h3>
+                <h3 id='credits'>Credits</h3>
                 <ul>
                     <li>
                         <a href="http://webdatacommons.org/" target="_blank">Web Data Commons</a>, for their web graph data set and everything related.
@@ -369,6 +369,9 @@ html_content += """
                     </li>
                     <li>
                         The authors of the <a href="https://webgraph.di.unimi.it/" target="_blank">WebGraph framework</a>, whose software simplifies the computation of rankings.
+                    </li>
+                    <li>
+                        This project is maintained by <a href="https://github.com/commoncrawl" target="_blank">Common Crawl</a>.  View the project on <a href="https://github.com/commoncrawl/cc-webgraph-statistics" target="_blank">GitHub</a>.
                     </li>
                 </ul>
             </div>
