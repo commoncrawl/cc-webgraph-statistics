@@ -48,7 +48,7 @@ def has_zero_signal(series):
     return series.nunique() <= 1
 
 
-def generate_plots(data):
+def generate_plots(data, latest_release):
     excluded = [
         'maxindegreenode',
         'maxoutdegreenode',
@@ -66,9 +66,10 @@ def generate_plots(data):
             if col not in ["release", "source"] and not has_comma_separated_values(data[col]) and not has_zero_signal(data[col]) and col not in excluded:
                 file_name = f"{col}.png"
                 file_path = f"../docs/plots/{file_name}"
+                html_file_name = f"{file_name}?version={latest_release}"
                 if args.no_plots and os.path.exists(file_path):
                     progress_bar.set_description(f"Using existing plot: {file_name}")
-                    plot_files.append((col, file_name))
+                    plot_files.append((col, html_file_name))
                 else:
                     progress_bar.set_description(f"Generating plot: {file_name}")
                     plot = (
@@ -138,11 +139,11 @@ combined_data['release'] = pd.Categorical(
     categories=combined_data['release'].unique()
 )
 
-plot_files = generate_plots(combined_data)
-
 last_updated = datetime.datetime.now().strftime("%Y-%m-%d")
 latest_release = combined_data['release'].iloc[-1]
 latest_release_url = f"https://data.commoncrawl.org/projects/hyperlinkgraph/{latest_release}/index.html"
+
+plot_files = generate_plots(combined_data, latest_release)
 
 html_content = """
 <!DOCTYPE html>
@@ -322,6 +323,7 @@ html_content += '</div>\n'
 for col in descriptions.keys():
     file_name = f"{col}.png"
     file_path = f"../docs/plots/{file_name}"
+    html_file_name = f"{file_name}?version={latest_release}"
     description = descriptions.get(col, "No description available.")
     if os.path.exists(file_path):
         html_content += f"""
@@ -329,8 +331,8 @@ for col in descriptions.keys():
             <h4 id="{col}">
                 <a href="#{col}">{col}</a>
             </h4>
-            <a href="./plots/{file_name}" target="_blank">
-                <img src="./plots/{file_name}" alt="{col} Plot">
+            <a href="./plots/{html_file_name}" target="_blank">
+                <img src="./plots/{html_file_name}" alt="{col} Plot">
             </a>
             <p>{description}</p>
         </div>
