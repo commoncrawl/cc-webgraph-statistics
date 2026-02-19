@@ -1,52 +1,102 @@
+/* Pagination */
 .pagination-controls {
     margin: 1rem 0;
-    padding: 0.5rem;
+    padding: 8px 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    background: #f5f5f5;
-    border-radius: 4px;
+    gap: 4px;
+    background: #f8fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
 }
 .pagination-controls button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 7px 14px;
+    min-width: 34px;
+    height: 34px;
+    border: 1px solid #dde2e9;
+    border-radius: 6px;
     background: #fff;
+    color: #64748b;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
 }
 .pagination-controls button:hover:not([disabled]) {
-    background: #f0f0f0;
-    border-color: #ccc;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #334155;
+}
+.pagination-controls button.active {
+    background: #eef4fa;
+    border-color: #b8c9e0;
+    color: #2e5f8a;
+    font-weight: 700;
 }
 .pagination-controls button[disabled] {
-    opacity: 0.5;
+    opacity: 0.3;
     cursor: not-allowed;
 }
 .pagination-controls .page-info {
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: #64748b;
+    white-space: nowrap;
+    padding: 0 4px;
 }
+
+/* Table header sorting */
 .header-content {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.5rem;
+    gap: 4px;
+    padding: 10px 14px;
     width: 100%;
     height: 100%;
 }
 th {
-    transition: background-color 0.2s;
+    transition: color 0.15s;
     padding: 0 !important;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    background: #f8fafb;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    border-bottom: 2px solid #e2e8f0;
 }
 th:hover {
-    background-color: #f0f0f0;
+    color: #152a47;
 }
 .sort-indicator {
     display: inline-block;
-    color: #666;
+    color: #94a3b8;
+    font-size: 10px;
 }
+
+/* Active sort column */
+th[data-sort="asc"],
+th[data-sort="desc"] {
+    color: #2e5f8a;
+}
+th[data-sort="asc"]::after {
+    content: " \25B2";
+    color: #2e5f8a;
+    font-size: 9px;
+}
+th[data-sort="desc"]::after {
+    content: " \25BC";
+    color: #2e5f8a;
+    font-size: 9px;
+}
+
+/* Dropdown table rows */
 .dropdown-content.active table tbody tr {
     display: table-row;
 }
