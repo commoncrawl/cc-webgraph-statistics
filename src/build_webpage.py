@@ -40,6 +40,24 @@ def fetch_top_entries(releases, file_type="host"):
     return release_entries
 
 
+def write_rank_json_files(releases, release_entries, file_type, output_dir):
+    """Write each release's rank data as a separate JSON file."""
+    os.makedirs(output_dir, exist_ok=True)
+    for release in releases:
+        release_str = str(release)
+        top_entries = release_entries[release_str]
+        if top_entries:
+            data = {
+                "header": top_entries[0],
+                "rows": top_entries[1:]
+            }
+        else:
+            data = {"header": [], "rows": []}
+        out_path = os.path.join(output_dir, f"{file_type}-{release_str}.json")
+        with open(out_path, "w") as f:
+            json.dump(data, f, separators=(',', ':'))
+
+
 def has_comma_separated_values(series):
     return series.astype(str).str.contains(",").any()
 
@@ -145,6 +163,16 @@ latest_release_url = f"https://data.commoncrawl.org/projects/hyperlinkgraph/{lat
 
 plot_files = generate_plots(combined_data, latest_release)
 
+# --- Write rank data as JSON files instead of embedding in HTML ---
+ranks_dir = "../docs/ranks"
+releases = combined_data['release'].unique()
+
+for file_type in ['domain', 'host']:
+    release_entries = fetch_top_entries(releases, file_type)
+    write_rank_json_files(releases, release_entries, file_type, ranks_dir)
+
+# --- Build HTML (without inline tables) ---
+
 html_content = """
 <!DOCTYPE html>
 <html lang="en">
@@ -174,25 +202,6 @@ html_content += embed_file('style.css')
 
 html_content += """
     </style>
-    <script>
-        function setupDropdownHandlers() {
-            const dropdowns = document.querySelectorAll('select[id$="-release-dropdown"]');
-            dropdowns.forEach(dropdown => {
-                dropdown.addEventListener('change', function () {
-                    const group = this.id.split('-')[0];
-                    const contents = document.querySelectorAll(`.dropdown-content[id^="dropdown-${group}"]`);
-                    contents.forEach(content => content.classList.remove("active"));
-                    const selected = this.value;
-                    if (selected) {
-                        document.getElementById(selected).classList.add("active");
-                    }
-                });
-            });
-        }
-        document.addEventListener("DOMContentLoaded", setupDropdownHandlers);
-    </script>
-"""
-html_content += """
     <script>
 """
 html_content += embed_file('pagination.js')
@@ -234,63 +243,27 @@ html_content += embed_markdown_file("description.md", "Description")
 
 html_content += '<h2 id="Top-1000-Ranks">Top 1000 Ranks</h2>'
 
+# Build dropdown UI for each file type, but NO inline tables
 for file_type in ['domain', 'host']:
-
     html_content += f'<div class="dropdown">'
     html_content += f'<div class="dropdown-label">{file_type.capitalize()}</div>'
     html_content += f'<div class="dropdown-controls">'
     html_content += f'<select id="{file_type}-release-dropdown">\n'
     html_content += '<option value="">Choose a release...</option>'
 
-    releases = combined_data['release'].unique()
-    release_entries = fetch_top_entries(releases, file_type)
-
     for release in reversed(releases):
         release_str = str(release)
-        html_content += f'<option value="dropdown-{file_type}-{release_str}">{release_str}</option>\n'
+        html_content += f'<option value="{file_type}-{release_str}">{release_str}</option>\n'
+
     html_content += '</select>'
     html_content += '</div>'
 
-    for release in releases:
-        release_str = str(release)
-        top_entries = release_entries[release_str]
-        html_content += f'<div class="dropdown-content" id="dropdown-{file_type}-{release_str}">'
-        if top_entries:
-            html_content += '<table>\n'
-            html_content += '<thead><tr>\n'
-            html_content += ''.join(f'<th>{col}</th>\n' for col in top_entries[0])
-            html_content += '</tr></thead>\n'
-            html_content += '<tbody>\n'
-            for row in top_entries[1:]:
-                html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>\n'
-            html_content += '</tbody></table>\n'
-        else:
-            html_content += '<p>No data available.</p>\n'
-        html_content += '</div>\n'
+    # Single empty container for dynamically loaded table content
+    html_content += '<div class="dropdown-content active" id="table-container-' + file_type + '">'
+    html_content += '<p class="placeholder-msg">Select a release to view ranks.</p>'
+    html_content += '</div>'
 
     html_content += '</div>\n'
-
-releases = combined_data['release'].unique()
-release_entries = fetch_top_entries(releases, 'domain')
-
-for release in releases:
-  release_str = str(release)
-  top_entries = release_entries[release_str]
-  html_content += f'<div class="dropdown-content" id="dropdown-{file_type}-{release_str}">'
-  if top_entries:
-      html_content += '<div class="table-with-pagination">\n'
-      html_content += '<table>\n'
-      html_content += '<thead><tr>\n'
-      html_content += ''.join(f'<th>{col}</th>\n' for col in top_entries[0])
-      html_content += '</tr></thead>\n'
-      html_content += '<tbody>\n'
-      for row in top_entries[1:]:
-          html_content += '<tr>' + ''.join(f'<td>{cell}</td>' for cell in row) + '</tr>\n'
-      html_content += '</tbody></table>\n'
-      html_content += '</div>\n'
-  else:
-      html_content += '<p>No data available.</p>\n'
-  html_content += '</div>\n'
 
 html_content += "<p>These ranks can be found by running the following:</p>"
 
@@ -406,12 +379,6 @@ html_content += """
         </div>
     </div>
 </footer>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    setupPagination();
-                    setupDropdownHandlers();
-                });
-            </script>
         </body>
         </html>
 """
