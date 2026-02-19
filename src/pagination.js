@@ -3,23 +3,22 @@ function setupPagination() {
         const table = dropdown.querySelector('table');
         if (!table || table.getAttribute('data-pagination-initialized')) return;
 
-        // Get initial rows but don't process them all immediately
         const tbody = table.querySelector('tbody');
         const rowsList = Array.from(tbody.children);
         let displayedRows = rowsList;
         let currentPage = 1;
         const rowsPerPage = 10;
 
-        // Add search box
+        // Create search container (stored on table, moved into controls row later)
         const searchContainer = document.createElement('div');
         searchContainer.className = 'search-container';
         searchContainer.innerHTML = `
-            <input type="text" class="search-input" placeholder="Search table...">
+            <input type="text" class="search-input" placeholder="Search table..." autocapitalize="off">
             <span class="search-count"></span>
         `;
-        table.parentNode.insertBefore(searchContainer, table);
+        table._searchContainer = searchContainer;
 
-        // Add pagination controls
+        // Add pagination controls after the table
         const controls = document.createElement('div');
         controls.className = 'pagination-controls';
         controls.innerHTML = `
@@ -38,54 +37,43 @@ function setupPagination() {
             totalPages: controls.querySelector('.total-pages')
         };
 
-        // Function to show current page
         function updateDisplay() {
-            const totalPages = Math.ceil(displayedRows.length / rowsPerPage);
+            const totalPages = Math.max(1, Math.ceil(displayedRows.length / rowsPerPage));
             const start = (currentPage - 1) * rowsPerPage;
             const end = start + rowsPerPage;
 
-            // Hide all rows
             rowsList.forEach(row => row.style.display = 'none');
-
-            // Show only current page rows
             displayedRows.slice(start, end).forEach(row => row.style.display = '');
 
-            // Update controls
             elements.currentPage.textContent = currentPage;
             elements.totalPages.textContent = totalPages;
             elements.prevBtn.disabled = currentPage === 1;
             elements.nextBtn.disabled = currentPage === totalPages;
         }
 
-        // Sorting functionality
+        // Sorting
         table.querySelectorAll('th').forEach((th, index) => {
             th.style.cursor = 'pointer';
             th.addEventListener('click', () => {
-                // Remove sort indicators from other columns
                 table.querySelectorAll('th').forEach(header => {
                     if (header !== th) header.removeAttribute('data-sort');
                 });
 
-                // Toggle sort direction
                 const currentSort = th.getAttribute('data-sort');
                 const newSort = currentSort === 'asc' ? 'desc' : 'asc';
                 th.setAttribute('data-sort', newSort);
 
-                // Sort rows
                 let targetRows = displayedRows.length > 0 ? displayedRows : rowsList;
 
                 targetRows.sort((a, b) => {
                     const aVal = a.cells[index].textContent.trim();
                     const bVal = b.cells[index].textContent.trim();
-
-                    // Try numeric sort first
                     const aNum = parseFloat(aVal.replace(/,/g, ''));
                     const bNum = parseFloat(bVal.replace(/,/g, ''));
 
                     if (!isNaN(aNum) && !isNaN(bNum)) {
                         return newSort === 'asc' ? aNum - bNum : bNum - aNum;
                     }
-                    // Fall back to string sort
                     return newSort === 'asc' ?
                         aVal.localeCompare(bVal) :
                         bVal.localeCompare(aVal);
@@ -100,7 +88,7 @@ function setupPagination() {
             });
         });
 
-        // Search functionality with debounce
+        // Search with debounce
         let searchTimeout = null;
         elements.searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
@@ -122,7 +110,7 @@ function setupPagination() {
             }, 300);
         });
 
-        // Pagination event handlers
+        // Pagination
         elements.prevBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
@@ -138,13 +126,30 @@ function setupPagination() {
             }
         });
 
-        // Initialize display
         table.setAttribute('data-pagination-initialized', 'true');
         updateDisplay();
     }
 
-    // Process each active dropdown
+    // Process each active dropdown-content
     document.querySelectorAll('.dropdown-content.active').forEach(setupTable);
+
+    // Move the active table's search container into the controls row
+    document.querySelectorAll('.dropdown').forEach(card => {
+        const controlsRow = card.querySelector('.dropdown-controls');
+        if (!controlsRow) return;
+
+        const activeContent = card.querySelector('.dropdown-content.active');
+        const activeTable = activeContent ? activeContent.querySelector('table') : null;
+
+        // Remove any existing search container from controls row
+        const existing = controlsRow.querySelector('.search-container');
+        if (existing) existing.remove();
+
+        // If there's an active table with a stored search container, move it in
+        if (activeTable && activeTable._searchContainer) {
+            controlsRow.appendChild(activeTable._searchContainer);
+        }
+    });
 }
 
 // Setup when dropdown changes

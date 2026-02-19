@@ -152,7 +152,6 @@ html_content = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Graph Statistics</title>
-    <link rel="stylesheet" href="https://data.commoncrawl.org/static/bucket.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -203,18 +202,32 @@ html_content += """
 html_content += """
 </head>
 <body>
-<h1>Web Graph Statistics</h1>
+<div class="cc-header-wrap">
+    <header class="cc-header">
+        <img src="img/logo.svg" alt="Common Crawl" class="cc-logo">
+        <div class="cc-htxt">
+            <h1>Web Graph Statistics</h1>
+            <p>Visualisations and metrics from the Common Crawl Web Graph dataset</p>
+        </div>
+    </header>
+</div>
 """
 
 html_content += f"""
-<div class="update-info">
-    <p><strong>Last Updated:</strong> {last_updated}</p>
-    <p><strong>Latest Release:</strong> <a href="{latest_release_url}" target="_blank">{latest_release}</a></p>
+<div class="cc-hero">
+    <div class="cc-hero-inner">
+        <img class="full-width-image" src="img/masthead.webp" alt="decorative">
+        <div class="update-info">
+            <span>Updated {last_updated}</span>
+            <span class="update-sep"></span>
+            <span>Latest release: <a href="{latest_release_url}" target="_blank">{latest_release}</a></span>
+        </div>
+    </div>
 </div>
 """
 
 html_content += """
-    <img class="full-width-image" src="img/masthead.webp" alt="decorative">
+<div class="cc-twrap">
 """
 
 html_content += embed_markdown_file("description.md", "Description")
@@ -223,8 +236,9 @@ html_content += '<h2 id="Top-1000-Ranks">Top 1000 Ranks</h2>'
 
 for file_type in ['domain', 'host']:
 
-    html_content += f'<span style="font-weight: bold">{file_type.capitalize()}</span>'
     html_content += f'<div class="dropdown">'
+    html_content += f'<div class="dropdown-label">{file_type.capitalize()}</div>'
+    html_content += f'<div class="dropdown-controls">'
     html_content += f'<select id="{file_type}-release-dropdown">\n'
     html_content += '<option value="">Choose a release...</option>'
 
@@ -253,6 +267,8 @@ for file_type in ['domain', 'host']:
         else:
             html_content += '<p>No data available.</p>\n'
         html_content += '</div>\n'
+
+    html_content += '</div>\n'
 
 releases = combined_data['release'].unique()
 release_entries = fetch_top_entries(releases, 'domain')
@@ -289,7 +305,7 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \\
         | head -n 1001
 </code></pre>"""
 
-html_content += "<p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>\n"
+html_content += "<br><p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>\n"
 
 html_content += '<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>\n'
 
@@ -301,7 +317,7 @@ html_content += """<div class="latex">
 </div>
 """
 
-html_content += "<p>With <a href ='https://en.wikipedia.org/wiki/PageRank' target='_blank'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank'>PageRankParallelGaussSeidel</a>.</p>\n"
+html_content += "<br><p>With <a href ='https://en.wikipedia.org/wiki/PageRank' target='_blank'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank'>PageRankParallelGaussSeidel</a>.</p>\n"
 
 html_content += "<p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>\n"
 
@@ -361,7 +377,7 @@ html_content += """
                 </ul>
             </div>
             <div>
-                <h3 id='credits'>Credits</h3>
+                <h3 id='credits'><a href="#credits">Credits</a></h3>
                 <ul>
                     <li>
                         <a href="http://webdatacommons.org/" target="_blank">Web Data Commons</a>, for their web graph data set and everything related.
@@ -378,18 +394,18 @@ html_content += """
                 </ul>
             </div>
             <a href="#">Back to Top...</a>
-            <footer>
-                <hr>
-                <p>
-                    <a href="https://commoncrawl.org/">Common Crawl</a> is a California 501(c)(3) registered non-profit organization.
-                    Hosting of <a href="https://commoncrawl.org/the-data/">Common Crawl data</a> is covered by
-                    <a href="https://aws.amazon.com/opendata/open-data-sponsorship-program/">Amazon Web Services' Open Data Sponsorship Program</a>.
-                </p>
-                <p>
-                    <a href="https://commoncrawl.org/terms-of-use" target="_blank">Terms of Use</a>
-                    <a href="https://commoncrawl.org/privacy-policy" target="_blank">Privacy</a>
-                </p>
-            </footer>
+</div>
+<footer class="cc-footer">
+    <div class="cc-footer-inner">
+        <div class="cc-footer-info">
+            <span><a href="https://commoncrawl.org" target="_blank" rel="noopener noreferrer">Common Crawl Foundation</a> is a California 501(c)(3) registered non-profit organization. Hosting of Common Crawl data is covered by <a href="https://aws.amazon.com/opendata/open-data-sponsorship-program/" target="_blank" rel="noopener noreferrer">Amazon Web Services' Open Data Sponsorship Program</a>.</span>
+            <div class="cc-footer-links">
+                <a href="https://commoncrawl.org/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+                <a href="https://commoncrawl.org/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy</a>
+            </div>
+        </div>
+    </div>
+</footer>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     setupPagination();
