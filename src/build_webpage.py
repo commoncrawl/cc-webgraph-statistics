@@ -204,7 +204,7 @@ html_content += """
     </style>
     <script>
 """
-html_content += embed_file('pagination_v2.js')
+html_content += embed_file('pagination.js')
 html_content += """
     </script>
 """
