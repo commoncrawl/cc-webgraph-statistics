@@ -900,9 +900,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="cc-hero-inner">
         <img class="full-width-image" src="img/masthead.webp" alt="decorative">
         <div class="update-info">
-            <span>Updated 2026-02-19</span>
+            <span>Updated 2026-02-24</span>
             <span class="update-sep"></span>
-            <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-nov-dec-jan/index.html" target="_blank">cc-main-2025-26-nov-dec-jan</a></span>
+            <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank">cc-main-2025-26-dec-jan-feb</a></span>
         </div>
     </div>
 </div>
@@ -917,7 +917,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <p>The top ten highest ranked hosts and domains from each release are listed below. Ranks are derived from <a href="https://en.wikipedia.org/wiki/Centrality">Harmonic Centrality</a>, and we also show <a href="https://en.wikipedia.org/wiki/PageRank">PageRank</a> for comparison.</p>
         </div>
 <h2 id="Top-1000-Ranks">Top 1000 Ranks</h2><div class="dropdown"><div class="dropdown-label">Domain</div><div class="dropdown-controls"><select id="domain-release-dropdown">
-<option value="">Choose a release...</option><option value="domain-cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
+<option value="">Choose a release...</option><option value="domain-cc-main-2025-26-dec-jan-feb">cc-main-2025-26-dec-jan-feb</option>
+<option value="domain-cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
 <option value="domain-cc-main-2025-oct-nov-dec">cc-main-2025-oct-nov-dec</option>
 <option value="domain-cc-main-2025-sep-oct-nov">cc-main-2025-sep-oct-nov</option>
 <option value="domain-cc-main-2025-aug-sep-oct">cc-main-2025-aug-sep-oct</option>
@@ -965,7 +966,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <option value="domain-cc-main-2017-feb-mar-apr">cc-main-2017-feb-mar-apr</option>
 </select></div><div class="dropdown-content active" id="table-container-domain"><p class="placeholder-msg">Select a release to view ranks.</p></div></div>
 <div class="dropdown"><div class="dropdown-label">Host</div><div class="dropdown-controls"><select id="host-release-dropdown">
-<option value="">Choose a release...</option><option value="host-cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
+<option value="">Choose a release...</option><option value="host-cc-main-2025-26-dec-jan-feb">cc-main-2025-26-dec-jan-feb</option>
+<option value="host-cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
 <option value="host-cc-main-2025-oct-nov-dec">cc-main-2025-oct-nov-dec</option>
 <option value="host-cc-main-2025-sep-oct-nov">cc-main-2025-sep-oct-nov</option>
 <option value="host-cc-main-2025-aug-sep-oct">cc-main-2025-aug-sep-oct</option>
@@ -1060,8 +1062,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="nodes">
                 <a href="#nodes">nodes</a>
             </h4>
-            <a href="./plots/nodes.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/nodes.png?version=cc-main-2025-26-nov-dec-jan" alt="nodes Plot">
+            <a href="./plots/nodes.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/nodes.png?version=cc-main-2025-26-dec-jan-feb" alt="nodes Plot">
             </a>
             <p>The total number of unique nodes (e.g., domains, hosts, or pages) in the graph. Each node represents an entity in the web graph.</p>
         </div>
@@ -1070,8 +1072,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="arcs">
                 <a href="#arcs">arcs</a>
             </h4>
-            <a href="./plots/arcs.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/arcs.png?version=cc-main-2025-26-nov-dec-jan" alt="arcs Plot">
+            <a href="./plots/arcs.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/arcs.png?version=cc-main-2025-26-dec-jan-feb" alt="arcs Plot">
             </a>
             <p>The total number of directed edges (or arcs) in the graph, representing links between nodes.</p>
         </div>
@@ -1080,8 +1082,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="successoravggap">
                 <a href="#successoravggap">successoravggap</a>
             </h4>
-            <a href="./plots/successoravggap.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/successoravggap.png?version=cc-main-2025-26-nov-dec-jan" alt="successoravggap Plot">
+            <a href="./plots/successoravggap.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/successoravggap.png?version=cc-main-2025-26-dec-jan-feb" alt="successoravggap Plot">
             </a>
             <p>The average gap between successive nodes in the adjacency list of the graph. This reflects the ordering and clustering of nodes in the graph.</p>
         </div>
@@ -1090,8 +1092,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="avglocality">
                 <a href="#avglocality">avglocality</a>
             </h4>
-            <a href="./plots/avglocality.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/avglocality.png?version=cc-main-2025-26-nov-dec-jan" alt="avglocality Plot">
+            <a href="./plots/avglocality.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/avglocality.png?version=cc-main-2025-26-dec-jan-feb" alt="avglocality Plot">
             </a>
             <p>A measure of the locality of edges in the graph, indicating how closely related the linked nodes are in terms of graph structure.</p>
         </div>
@@ -1100,8 +1102,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="maxoutdegree">
                 <a href="#maxoutdegree">maxoutdegree</a>
             </h4>
-            <a href="./plots/maxoutdegree.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/maxoutdegree.png?version=cc-main-2025-26-nov-dec-jan" alt="maxoutdegree Plot">
+            <a href="./plots/maxoutdegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/maxoutdegree.png?version=cc-main-2025-26-dec-jan-feb" alt="maxoutdegree Plot">
             </a>
             <p>The highest number of outgoing edges (links) from a single node in the graph. This identifies the most connected node in terms of outlinks.</p>
         </div>
@@ -1110,8 +1112,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="dangling">
                 <a href="#dangling">dangling</a>
             </h4>
-            <a href="./plots/dangling.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/dangling.png?version=cc-main-2025-26-nov-dec-jan" alt="dangling Plot">
+            <a href="./plots/dangling.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/dangling.png?version=cc-main-2025-26-dec-jan-feb" alt="dangling Plot">
             </a>
             <p>The total number of dangling nodes in the graph, which are nodes (vertices) with zero outgoing edges (arcs).</p>
         </div>
@@ -1120,8 +1122,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="percdangling">
                 <a href="#percdangling">percdangling</a>
             </h4>
-            <a href="./plots/percdangling.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/percdangling.png?version=cc-main-2025-26-nov-dec-jan" alt="percdangling Plot">
+            <a href="./plots/percdangling.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/percdangling.png?version=cc-main-2025-26-dec-jan-feb" alt="percdangling Plot">
             </a>
             <p>The percentage of nodes in the graph that are dangling nodes (see above).</p>
         </div>
@@ -1130,8 +1132,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="avgoutdegree">
                 <a href="#avgoutdegree">avgoutdegree</a>
             </h4>
-            <a href="./plots/avgoutdegree.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/avgoutdegree.png?version=cc-main-2025-26-nov-dec-jan" alt="avgoutdegree Plot">
+            <a href="./plots/avgoutdegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/avgoutdegree.png?version=cc-main-2025-26-dec-jan-feb" alt="avgoutdegree Plot">
             </a>
             <p>The average number of outgoing edges per node. This provides an overview of the graph's overall connectivity.</p>
         </div>
@@ -1140,8 +1142,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="successoravglogdelta">
                 <a href="#successoravglogdelta">successoravglogdelta</a>
             </h4>
-            <a href="./plots/successoravglogdelta.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/successoravglogdelta.png?version=cc-main-2025-26-nov-dec-jan" alt="successoravglogdelta Plot">
+            <a href="./plots/successoravglogdelta.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/successoravglogdelta.png?version=cc-main-2025-26-dec-jan-feb" alt="successoravglogdelta Plot">
             </a>
             <p>The average logarithmic difference between successive node IDs in the adjacency list. This reflects the dispersion of node IDs in the graph structure.</p>
         </div>
@@ -1150,8 +1152,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="maxindegree">
                 <a href="#maxindegree">maxindegree</a>
             </h4>
-            <a href="./plots/maxindegree.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/maxindegree.png?version=cc-main-2025-26-nov-dec-jan" alt="maxindegree Plot">
+            <a href="./plots/maxindegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/maxindegree.png?version=cc-main-2025-26-dec-jan-feb" alt="maxindegree Plot">
             </a>
             <p>The highest number of incoming edges (links) to a single node in the graph. It identifies the most referenced or linked-to node.</p>
         </div>
@@ -1160,8 +1162,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="avgindegree">
                 <a href="#avgindegree">avgindegree</a>
             </h4>
-            <a href="./plots/avgindegree.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/avgindegree.png?version=cc-main-2025-26-nov-dec-jan" alt="avgindegree Plot">
+            <a href="./plots/avgindegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/avgindegree.png?version=cc-main-2025-26-dec-jan-feb" alt="avgindegree Plot">
             </a>
             <p>The average number of incoming edges per node. This is equal to avgoutdegree in a balanced directed graph.</p>
         </div>
@@ -1170,8 +1172,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="sccs">
                 <a href="#sccs">sccs</a>
             </h4>
-            <a href="./plots/sccs.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/sccs.png?version=cc-main-2025-26-nov-dec-jan" alt="sccs Plot">
+            <a href="./plots/sccs.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/sccs.png?version=cc-main-2025-26-dec-jan-feb" alt="sccs Plot">
             </a>
             <p>The total number of strongly connected components (SCCs) in the graph. SCCs are subgraphs in which every node is reachable from every other node within the subgraph.</p>
         </div>
@@ -1180,8 +1182,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="maxsccsize">
                 <a href="#maxsccsize">maxsccsize</a>
             </h4>
-            <a href="./plots/maxsccsize.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/maxsccsize.png?version=cc-main-2025-26-nov-dec-jan" alt="maxsccsize Plot">
+            <a href="./plots/maxsccsize.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/maxsccsize.png?version=cc-main-2025-26-dec-jan-feb" alt="maxsccsize Plot">
             </a>
             <p>The size (number of nodes) of the largest strongly connected component (SCC) in the graph. This indicates the largest cluster of nodes that are mutually reachable.</p>
         </div>
@@ -1190,8 +1192,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="percmaxscc">
                 <a href="#percmaxscc">percmaxscc</a>
             </h4>
-            <a href="./plots/percmaxscc.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/percmaxscc.png?version=cc-main-2025-26-nov-dec-jan" alt="percmaxscc Plot">
+            <a href="./plots/percmaxscc.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/percmaxscc.png?version=cc-main-2025-26-dec-jan-feb" alt="percmaxscc Plot">
             </a>
             <p>The percentage of nodes in the graph that belong to the largest strongly connected component (SCC). It shows how dominant the largest SCC is in the overall graph.</p>
         </div>
@@ -1200,8 +1202,8 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="percminscc">
                 <a href="#percminscc">percminscc</a>
             </h4>
-            <a href="./plots/percminscc.png?version=cc-main-2025-26-nov-dec-jan" target="_blank">
-                <img src="./plots/percminscc.png?version=cc-main-2025-26-nov-dec-jan" alt="percminscc Plot">
+            <a href="./plots/percminscc.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
+                <img src="./plots/percminscc.png?version=cc-main-2025-26-dec-jan-feb" alt="percminscc Plot">
             </a>
             <p>The percentage of nodes in the graph that belong to the smallest strongly connected components (SCCs) (typically isolated nodes or trivial SCCs). This indicates the prevalence of disconnected or minimally connected components.</p>
         </div>
