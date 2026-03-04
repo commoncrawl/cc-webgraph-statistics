@@ -113,6 +113,7 @@ code {
 .cc-hero {
     background: #fff;
     border-bottom: 1px solid #e2e8f0;
+    overflow: hidden;
 }
 .cc-hero-inner {
     max-width: 1200px;
@@ -123,6 +124,7 @@ code {
     max-width: 100%;
     border-radius: 8px;
     margin: 0 0 14px;
+    will-change: transform, opacity;
 }
 .update-info {
     display: flex;

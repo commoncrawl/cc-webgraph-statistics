@@ -611,6 +611,11 @@ html_content += '<script>\n'
 html_content += embed_file('domain-lookup.js')
 html_content += '\n</script>\n'
 
+# --- Hero parallax ---
+html_content += '<script>\n'
+html_content += embed_file('parallax.js')
+html_content += '\n</script>\n'
+
 # --- Floating back-to-top button ---
 html_content += """
 <a href="#" class="back-to-top" id="back-to-top" aria-label="Back to top">
