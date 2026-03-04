@@ -29,7 +29,8 @@
             var progress = Math.min(scrolled / heroH, 1);
 
             /* Image moves up at 80% scroll speed (strong parallax lag) */
-            var translateY = scrolled * 0.8;
+            var maxShift = img.offsetHeight * 0.5;
+            var translateY = Math.min(scrolled * 0.8, maxShift);
             /* Fade out over the first 80% of scroll through hero */
             var opacity = 1 - Math.min(progress / 0.8, 1);
 

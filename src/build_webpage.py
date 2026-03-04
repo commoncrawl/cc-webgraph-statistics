@@ -370,12 +370,14 @@ html_content += """
 html_content += f"""
 <div class="cc-hero">
     <div class="cc-hero-inner">
-        <img class="full-width-image" src="img/masthead.webp" alt="decorative">
-        <div class="update-info">
-            <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated {last_updated}</a></span>
-            <span class="update-sep"></span>
-            <span>Latest release: <a href="{latest_release_url}" target="_blank" rel="noopener noreferrer nofollow">{latest_release}</a></span>
-        </div>
+        <img class="full-width-image" src="img/masthead.webp" alt="decorative" draggable="false">
+    </div>
+</div>
+<div class="update-bar">
+    <div class="update-info">
+        <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated {last_updated}</a></span>
+        <span class="update-sep"></span>
+        <span>Latest release: <a href="{latest_release_url}" target="_blank" rel="noopener noreferrer nofollow">{latest_release}</a></span>
     </div>
 </div>
 """

@@ -112,7 +112,6 @@ code {
 /* === Hero section (masthead + metadata) === */
 .cc-hero {
     background: #fff;
-    border-bottom: 1px solid #e2e8f0;
     overflow: hidden;
 }
 .cc-hero-inner {
@@ -123,10 +122,19 @@ code {
 .cc-hero .full-width-image {
     max-width: 100%;
     border-radius: 8px;
-    margin: 0 0 14px;
+    margin: 0;
     will-change: transform, opacity;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+.update-bar {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
 }
 .update-info {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     gap: 0;
@@ -1048,7 +1056,7 @@ a[href="#"].legacy-top {
     .cc-htxt h1 { font-size: 17px; }
     .cc-htxt p { font-size: 13px; }
     .cc-hero-inner { padding: 14px 14px 12px; }
-    .update-info { flex-wrap: wrap; gap: 0; }
+    .update-info { flex-wrap: wrap; gap: 0; padding: 10px 14px; }
     .update-sep { display: none; }
     .update-info span { display: block; }
     .cc-twrap { padding: 12px 14px 20px; }

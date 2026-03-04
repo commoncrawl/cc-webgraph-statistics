@@ -140,7 +140,7 @@ code {
 /* === Hero section (masthead + metadata) === */
 .cc-hero {
     background: #fff;
-    border-bottom: 1px solid #e2e8f0;
+    overflow: hidden;
 }
 .cc-hero-inner {
     max-width: 1200px;
@@ -150,9 +150,19 @@ code {
 .cc-hero .full-width-image {
     max-width: 100%;
     border-radius: 8px;
-    margin: 0 0 14px;
+    margin: 0;
+    will-change: transform, opacity;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+.update-bar {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
 }
 .update-info {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     gap: 0;
@@ -1074,7 +1084,7 @@ a[href="#"].legacy-top {
     .cc-htxt h1 { font-size: 17px; }
     .cc-htxt p { font-size: 13px; }
     .cc-hero-inner { padding: 14px 14px 12px; }
-    .update-info { flex-wrap: wrap; gap: 0; }
+    .update-info { flex-wrap: wrap; gap: 0; padding: 10px 14px; }
     .update-sep { display: none; }
     .update-info span { display: block; }
     .cc-twrap { padding: 12px 14px 20px; }
@@ -1538,12 +1548,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class="cc-hero">
     <div class="cc-hero-inner">
-        <img class="full-width-image" src="img/masthead.webp" alt="decorative">
-        <div class="update-info">
-            <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated 2026-03-04</a></span>
-            <span class="update-sep"></span>
-            <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank" rel="noopener noreferrer nofollow">cc-main-2025-26-dec-jan-feb</a></span>
-        </div>
+        <img class="full-width-image" src="img/masthead.webp" alt="decorative" draggable="false">
+    </div>
+</div>
+<div class="update-bar">
+    <div class="update-info">
+        <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated 2026-03-04</a></span>
+        <span class="update-sep"></span>
+        <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank" rel="noopener noreferrer nofollow">cc-main-2025-26-dec-jan-feb</a></span>
     </div>
 </div>
 
@@ -2928,6 +2940,54 @@ window.CHART_DATA = {"nodes":{"releases":["cc-main-2017-feb-mar-apr","cc-main-20
     } else {
         init();
     }
+})();
+
+</script>
+<script>
+/* === Hero parallax fade-out === */
+(function() {
+    'use strict';
+
+    var img = document.querySelector('.cc-hero .full-width-image');
+    if (!img) return;
+
+    /* Respect prefers-reduced-motion */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var hero = document.querySelector('.cc-hero');
+    var ticking = false;
+
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function() {
+            var rect = hero.getBoundingClientRect();
+            var heroH = hero.offsetHeight;
+
+            /* Only animate while hero is in view */
+            if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+                ticking = false;
+                return;
+            }
+
+            /* scrolled = how far past the top of the hero we've scrolled */
+            var scrolled = Math.max(0, -rect.top);
+            var progress = Math.min(scrolled / heroH, 1);
+
+            /* Image moves up at 80% scroll speed (strong parallax lag) */
+            var maxShift = img.offsetHeight * 0.5;
+            var translateY = Math.min(scrolled * 0.8, maxShift);
+            /* Fade out over the first 80% of scroll through hero */
+            var opacity = 1 - Math.min(progress / 0.8, 1);
+
+            img.style.transform = 'translateY(' + translateY + 'px)';
+            img.style.opacity = opacity;
+
+            ticking = false;
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
 })();
 
 </script>
