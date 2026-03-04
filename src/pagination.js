@@ -1,13 +1,11 @@
-// Rank data is loaded on demand from JSON files in ranks/ directory.
-// Each file is named {type}-{release}.json and contains:
-//   { "header": ["col1", ...], "rows": [["val1", ...], ...] }
+// Rank tables — shared dropdown + search, tabbed domain/host panels.
+// Data loaded on demand from ranks/{type}-{release}.json files.
 
 const rankCache = {};
 
 async function fetchRankData(fileType, release) {
     const key = `${fileType}-${release}`;
     if (rankCache[key]) return rankCache[key];
-
     const url = `ranks/${fileType}-${release}.json`;
     try {
         const resp = await fetch(url);
@@ -21,22 +19,33 @@ async function fetchRankData(fileType, release) {
     }
 }
 
-function buildTable(container, data) {
-    // Clear previous content
-    container.innerHTML = '';
+// Per-panel state: rows, displayed rows, page, sort
+const panelState = { domain: null, host: null };
 
+const HEADER_LABELS = {
+    '#harmonicc_pos': 'HC Rank',
+    '#harmonicc_val': 'HC Value',
+    '#pr_pos': 'PR Rank',
+    '#pr_val': 'PR Value',
+    '#host_rev': 'Host (rev)',
+    '#n_hosts': 'Hosts',
+    '#domain_rev': 'Domain (rev)'
+};
+
+function buildTable(container, data, fileType) {
+    container.innerHTML = '';
     if (!data || !data.header.length || !data.rows.length) {
         container.innerHTML = '<p>No data available.</p>';
+        panelState[fileType] = null;
         return;
     }
 
-    // Build table element
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     data.header.forEach(col => {
         const th = document.createElement('th');
-        th.textContent = col;
+        th.textContent = HEADER_LABELS[col.toLowerCase()] || col;
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -55,42 +64,7 @@ function buildTable(container, data) {
     table.appendChild(tbody);
     container.appendChild(table);
 
-    // Set up search, sort, and pagination on this table
-    setupTableInteractions(container, table);
-}
-
-function setupTableInteractions(container, table) {
-    const tbody = table.querySelector('tbody');
-    const rowsList = Array.from(tbody.children);
-    let displayedRows = rowsList;
-    let currentPage = 1;
-    const rowsPerPage = 10;
-
-    // Create search container
-    const dropdown = container.closest('.dropdown');
-    const controlsRow = dropdown ? dropdown.querySelector('.dropdown-controls') : null;
-
-    // Remove any existing search container from controls row
-    if (controlsRow) {
-        const existing = controlsRow.querySelector('.search-container');
-        if (existing) existing.remove();
-    }
-
-    const searchContainer = document.createElement('div');
-    searchContainer.className = 'search-container';
-    searchContainer.innerHTML = `
-        <input type="text" class="search-input" placeholder="Search table..." autocapitalize="off">
-        <span class="search-count"></span>
-    `;
-
-    // Place search in the controls row if available
-    if (controlsRow) {
-        controlsRow.appendChild(searchContainer);
-    } else {
-        container.insertBefore(searchContainer, table);
-    }
-
-    // Add pagination controls after the table
+    // Pagination controls
     const controls = document.createElement('div');
     controls.className = 'pagination-controls';
     controls.innerHTML = `
@@ -100,138 +74,181 @@ function setupTableInteractions(container, table) {
     `;
     container.appendChild(controls);
 
-    const elements = {
-        searchInput: searchContainer.querySelector('.search-input'),
-        searchCount: searchContainer.querySelector('.search-count'),
+    const rowsList = Array.from(tbody.children);
+    const state = {
+        rowsList: rowsList,
+        displayedRows: rowsList,
+        currentPage: 1,
+        rowsPerPage: 10,
+        table: table,
+        tbody: tbody,
         prevBtn: controls.querySelector('.prev-btn'),
         nextBtn: controls.querySelector('.next-btn'),
-        currentPage: controls.querySelector('.current-page'),
-        totalPages: controls.querySelector('.total-pages')
+        currentPageEl: controls.querySelector('.current-page'),
+        totalPagesEl: controls.querySelector('.total-pages')
     };
-
-    function updateDisplay() {
-        const totalPages = Math.max(1, Math.ceil(displayedRows.length / rowsPerPage));
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        rowsList.forEach(row => row.style.display = 'none');
-        displayedRows.slice(start, end).forEach(row => row.style.display = '');
-
-        elements.currentPage.textContent = currentPage;
-        elements.totalPages.textContent = totalPages;
-        elements.prevBtn.disabled = currentPage === 1;
-        elements.nextBtn.disabled = currentPage === totalPages;
-    }
+    panelState[fileType] = state;
 
     // Sorting
     table.querySelectorAll('th').forEach((th, index) => {
         th.style.cursor = 'pointer';
         th.addEventListener('click', () => {
-            table.querySelectorAll('th').forEach(header => {
-                if (header !== th) header.removeAttribute('data-sort');
-            });
-
-            const currentSort = th.getAttribute('data-sort');
-            const newSort = currentSort === 'asc' ? 'desc' : 'asc';
-            th.setAttribute('data-sort', newSort);
-
-            let targetRows = displayedRows.length > 0 ? displayedRows : rowsList;
-
-            targetRows.sort((a, b) => {
+            table.querySelectorAll('th').forEach(h => { if (h !== th) h.removeAttribute('data-sort'); });
+            const dir = th.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
+            th.setAttribute('data-sort', dir);
+            const rows = state.displayedRows.length > 0 ? state.displayedRows : state.rowsList;
+            rows.sort((a, b) => {
                 const aVal = a.cells[index].textContent.trim();
                 const bVal = b.cells[index].textContent.trim();
                 const aNum = parseFloat(aVal.replace(/,/g, ''));
                 const bNum = parseFloat(bVal.replace(/,/g, ''));
-
-                if (!isNaN(aNum) && !isNaN(bNum)) {
-                    return newSort === 'asc' ? aNum - bNum : bNum - aNum;
-                }
-                return newSort === 'asc' ?
-                    aVal.localeCompare(bVal) :
-                    bVal.localeCompare(aVal);
+                if (!isNaN(aNum) && !isNaN(bNum)) return dir === 'asc' ? aNum - bNum : bNum - aNum;
+                return dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
             });
-
-            tbody.innerHTML = "";
-            targetRows.forEach(row => tbody.appendChild(row));
-
-            displayedRows = [...targetRows];
-            currentPage = 1;
-            updateDisplay();
+            state.tbody.innerHTML = '';
+            rows.forEach(r => state.tbody.appendChild(r));
+            state.displayedRows = [...rows];
+            state.currentPage = 1;
+            updatePanelDisplay(state);
         });
     });
 
-    // Search with debounce
-    let searchTimeout = null;
-    elements.searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            const searchTerm = elements.searchInput.value.toLowerCase();
-            if (!searchTerm) {
-                displayedRows = rowsList;
-                elements.searchCount.textContent = '';
-            } else {
-                displayedRows = rowsList.filter(row =>
-                    Array.from(row.cells).some(cell =>
-                        cell.textContent.toLowerCase().includes(searchTerm)
-                    )
-                );
-                elements.searchCount.textContent = `${displayedRows.length} matches`;
-            }
-            currentPage = 1;
-            updateDisplay();
-        }, 300);
+    // Pagination buttons
+    state.prevBtn.addEventListener('click', () => {
+        if (state.currentPage > 1) { state.currentPage--; updatePanelDisplay(state); }
+    });
+    state.nextBtn.addEventListener('click', () => {
+        const tp = Math.ceil(state.displayedRows.length / state.rowsPerPage);
+        if (state.currentPage < tp) { state.currentPage++; updatePanelDisplay(state); }
     });
 
-    // Pagination
-    elements.prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updateDisplay();
-        }
-    });
-
-    elements.nextBtn.addEventListener('click', () => {
-        const totalPages = Math.ceil(displayedRows.length / rowsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            updateDisplay();
-        }
-    });
-
-    updateDisplay();
+    updatePanelDisplay(state);
 }
 
-// Handle dropdown change: fetch data and build table
-async function onReleaseSelect(selectEl) {
-    const value = selectEl.value; // e.g. "domain-cc-main-2025-oct-nov-dec"
-    if (!value) return;
+function updatePanelDisplay(state) {
+    if (!state) return;
+    const tp = Math.max(1, Math.ceil(state.displayedRows.length / state.rowsPerPage));
+    const start = (state.currentPage - 1) * state.rowsPerPage;
+    const end = start + state.rowsPerPage;
+    state.rowsList.forEach(r => r.style.display = 'none');
+    state.displayedRows.slice(start, end).forEach(r => r.style.display = '');
+    state.currentPageEl.textContent = state.currentPage;
+    state.totalPagesEl.textContent = tp;
+    state.prevBtn.disabled = state.currentPage === 1;
+    state.nextBtn.disabled = state.currentPage === tp;
+}
 
-    const dashIdx = value.indexOf('-');
-    const fileType = value.substring(0, dashIdx);   // "domain" or "host"
-    const release = value.substring(dashIdx + 1);    // "cc-main-2025-oct-nov-dec"
+function applySearch(term) {
+    ['domain', 'host'].forEach(ft => {
+        const state = panelState[ft];
+        if (!state) return;
+        if (!term) {
+            state.displayedRows = state.rowsList;
+        } else {
+            state.displayedRows = state.rowsList.filter(row =>
+                Array.from(row.cells).some(c => c.textContent.toLowerCase().includes(term))
+            );
+        }
+        state.currentPage = 1;
+        updatePanelDisplay(state);
+    });
+    // Update search count for the active panel
+    const active = getActiveType();
+    const s = panelState[active];
+    const countEl = document.getElementById('rank-search-count');
+    if (countEl) {
+        countEl.textContent = (term && s) ? `${s.displayedRows.length} matches` : '';
+    }
+}
 
-    const container = document.getElementById(`table-container-${fileType}`);
-    if (!container) return;
+function getActiveType() {
+    const activeTab = document.querySelector('.rank-tab.active');
+    return activeTab ? activeTab.dataset.tab : 'domain';
+}
 
-    // Show loading state
-    container.innerHTML = '<p>Loading...</p>';
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdown = document.getElementById('rank-release-dropdown');
+    const searchContainer = document.getElementById('rank-search-container');
+    const searchInput = document.getElementById('rank-search-input');
+    const searchCount = document.getElementById('rank-search-count');
+    const rankContent = document.getElementById('rank-content');
+    if (!dropdown) return;
 
-    // Remove search from controls while loading
-    const dropdown = container.closest('.dropdown');
-    if (dropdown) {
-        const existing = dropdown.querySelector('.dropdown-controls .search-container');
-        if (existing) existing.remove();
+    // Release selection — load both tables
+    dropdown.addEventListener('change', async function() {
+        const release = this.value;
+        if (!release) {
+            // Fold closed
+            if (rankContent) rankContent.classList.remove('open');
+            if (searchContainer) searchContainer.style.display = 'none';
+            if (searchInput) { searchInput.value = ''; }
+            if (searchCount) { searchCount.textContent = ''; }
+            // Clear after transition
+            setTimeout(() => {
+                ['domain', 'host'].forEach(ft => {
+                    const c = document.getElementById('table-container-' + ft);
+                    if (c) c.innerHTML = '';
+                    panelState[ft] = null;
+                });
+            }, 350);
+            return;
+        }
+
+        ['domain', 'host'].forEach(ft => {
+            const c = document.getElementById('table-container-' + ft);
+            if (c) c.innerHTML = '<p>Loading...</p>';
+        });
+        // Open immediately so loading message is visible
+        if (rankContent) rankContent.classList.add('open');
+
+        const [domainData, hostData] = await Promise.all([
+            fetchRankData('domain', release),
+            fetchRankData('host', release)
+        ]);
+
+        buildTable(document.getElementById('table-container-domain'), domainData, 'domain');
+        buildTable(document.getElementById('table-container-host'), hostData, 'host');
+
+        // Show search bar and reset it
+        if (searchContainer) searchContainer.style.display = '';
+        if (searchInput) { searchInput.value = ''; }
+        if (searchCount) { searchCount.textContent = ''; }
+    });
+
+    // Shared search
+    let searchTimeout = null;
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applySearch(searchInput.value.toLowerCase());
+            }, 300);
+        });
     }
 
-    const data = await fetchRankData(fileType, release);
-    buildTable(container, data);
-}
+    // Tab switching
+    document.querySelectorAll('.rank-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.rank-tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
 
-// Wire up dropdowns on page load
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('select[id$="-release-dropdown"]').forEach(dropdown => {
-        dropdown.addEventListener('change', function() {
-            onReleaseSelect(this);
+            document.querySelectorAll('.rank-panel').forEach(p => {
+                p.classList.remove('active');
+                p.hidden = true;
+            });
+            const panel = document.getElementById('panel-' + tab.dataset.tab);
+            if (panel) { panel.classList.add('active'); panel.hidden = false; }
+
+            // Update search count for newly visible panel
+            const term = searchInput ? searchInput.value.toLowerCase() : '';
+            const s = panelState[tab.dataset.tab];
+            if (searchCount) {
+                searchCount.textContent = (term && s) ? `${s.displayedRows.length} matches` : '';
+            }
         });
     });
 });

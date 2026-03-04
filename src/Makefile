@@ -29,12 +29,6 @@ build:
 	printf "$(PREF)Building the web page...\n" && \
 	python build_webpage.py
 
-# Build the webpage
-.PHONY: noplot
-noplot:
-	printf "$(PREF)Building the web page without plots...\n" && \
-	python build_webpage.py --no-plots
-
 # Update with the latest release if not already present
 .PHONY: update
 update:
