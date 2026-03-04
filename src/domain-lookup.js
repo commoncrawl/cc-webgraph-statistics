@@ -344,6 +344,21 @@
     }
 
     /* --- Wire up UI --- */
+    function setupDomainClear(input) {
+        if (!input) return;
+        var wrap = input.closest('.search-input-wrap');
+        if (!wrap) return;
+        var btn = wrap.querySelector('.domain-clear');
+        if (!btn) return;
+        function toggle() { btn.classList.toggle('visible', input.value.length > 0); }
+        input.addEventListener('input', toggle);
+        btn.addEventListener('click', function() {
+            input.value = '';
+            toggle();
+            input.focus();
+        });
+    }
+
     function init() {
         var btn    = document.getElementById('domain-search-btn');
         var input1 = document.getElementById('domain-search-input');
@@ -354,6 +369,9 @@
         function onEnter(e) { if (e.key === 'Enter') doSearch(); }
         if (input1) input1.addEventListener('keydown', onEnter);
         if (input2) input2.addEventListener('keydown', onEnter);
+
+        setupDomainClear(input1);
+        setupDomainClear(input2);
     }
 
     if (document.readyState === 'loading') {

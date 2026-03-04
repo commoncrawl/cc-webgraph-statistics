@@ -209,20 +209,35 @@ document.addEventListener('DOMContentLoaded', () => {
         buildTable(document.getElementById('table-container-domain'), domainData, 'domain');
         buildTable(document.getElementById('table-container-host'), hostData, 'host');
 
-        // Show search bar and reset it
+        // Show search bar and re-apply any existing search term
         if (searchContainer) searchContainer.style.display = '';
-        if (searchInput) { searchInput.value = ''; }
-        if (searchCount) { searchCount.textContent = ''; }
+        var term = searchInput ? searchInput.value.toLowerCase() : '';
+        if (term) {
+            applySearch(term);
+        }
     });
 
     // Shared search
     let searchTimeout = null;
+    const clearBtn = document.getElementById('rank-search-clear');
+    function updateClearBtn() {
+        if (clearBtn) clearBtn.classList.toggle('visible', searchInput.value.length > 0);
+    }
     if (searchInput) {
         searchInput.addEventListener('input', () => {
+            updateClearBtn();
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 applySearch(searchInput.value.toLowerCase());
             }, 300);
+        });
+    }
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            updateClearBtn();
+            applySearch('');
+            searchInput.focus();
         });
     }
 
@@ -235,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             tab.classList.add('active');
             tab.setAttribute('aria-selected', 'true');
+            var tabs = Array.from(document.querySelectorAll('.rank-tab'));
+            document.querySelector('.rank-tabs').dataset.active = tabs.indexOf(tab);
 
             document.querySelectorAll('.rank-panel').forEach(p => {
                 p.classList.remove('active');

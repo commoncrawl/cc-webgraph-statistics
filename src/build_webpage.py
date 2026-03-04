@@ -372,7 +372,7 @@ html_content += f"""
     <div class="cc-hero-inner">
         <img class="full-width-image" src="img/masthead.webp" alt="decorative">
         <div class="update-info">
-            <span>Updated {last_updated}</span>
+            <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated {last_updated}</a></span>
             <span class="update-sep"></span>
             <span>Latest release: <a href="{latest_release_url}" target="_blank" rel="noopener noreferrer nofollow">{latest_release}</a></span>
         </div>
@@ -391,7 +391,7 @@ html_content += '<h2 id="Top-1000-Ranks"><a href="#Top-1000-Ranks">Top 1000 Rank
 # Tabbed rank panel — tabs first, shared controls, then table content
 html_content += """
 <div class="rank-tabbed">
-    <div class="rank-tabs" role="tablist">
+    <div class="rank-tabs" role="tablist" data-active="0">
         <button class="rank-tab active" role="tab" aria-selected="true"
                 data-tab="domain" id="tab-domain" aria-controls="panel-domain">Domain</button>
         <button class="rank-tab" role="tab" aria-selected="false"
@@ -408,7 +408,10 @@ for release in reversed(releases):
 
 html_content += """            </select>
             <div class="search-container" id="rank-search-container" style="display:none">
-                <input type="text" class="search-input" id="rank-search-input" placeholder="Search table..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+                <div class="search-input-wrap">
+                    <input type="text" class="search-input" id="rank-search-input" placeholder="Search table..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+                    <button type="button" class="search-clear" id="rank-search-clear" aria-label="Clear search">&times;</button>
+                </div>
                 <span class="search-count" id="rank-search-count"></span>
             </div>
         </div>
@@ -483,10 +486,16 @@ html_content += """
     <h4 id="Domain-Lookup"><a href="#Domain-Lookup">Domain Lookup</a></h4>
     <p>Search for a domain to see its Harmonic Centrality and PageRank over time. Enter a second domain to compare them side by side. Only domains that appear in the top 1,000 for at least one release are available.</p>
     <div class="domain-search-row">
-        <input type="text" id="domain-search-input" class="domain-search-input"
-               placeholder="e.g. wikipedia.org" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-        <input type="text" id="domain-search-input-2" class="domain-search-input"
-               placeholder="compare with… (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <div class="search-input-wrap">
+            <input type="text" id="domain-search-input" class="domain-search-input"
+                   placeholder="e.g. wikipedia.org" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button type="button" class="search-clear domain-clear" aria-label="Clear search">&times;</button>
+        </div>
+        <div class="search-input-wrap">
+            <input type="text" id="domain-search-input-2" class="domain-search-input"
+                   placeholder="compare with… (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button type="button" class="search-clear domain-clear" aria-label="Clear search">&times;</button>
+        </div>
         <button type="button" id="domain-search-btn" class="domain-search-btn">
             <i class="fas fa-search"></i> Look up
         </button>
