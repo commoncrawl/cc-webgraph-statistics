@@ -356,7 +356,7 @@ html_content += """
 <body autocapitalize="off">
 <div class="cc-header-wrap">
     <header class="cc-header">
-        <a href="https://commoncrawl.org" target="_blank" rel="noopener noreferrer nofollow">
+        <a href="./">
           <img src="img/logo.svg" alt="Common Crawl" class="cc-logo">
         </a>
         <div class="cc-htxt">
@@ -407,9 +407,9 @@ for release in reversed(releases):
     html_content += f'                <option value="{release_str}">{release_str}</option>\n'
 
 html_content += """            </select>
-            <div class="search-container" id="rank-search-container" style="display:none">
+            <div class="search-container" id="rank-search-container">
                 <div class="search-input-wrap">
-                    <input type="text" class="search-input" id="rank-search-input" placeholder="Search table..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false">
+                    <input type="text" class="search-input" id="rank-search-input" placeholder="Search table..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" disabled>
                     <button type="button" class="search-clear" id="rank-search-clear" aria-label="Clear search">&times;</button>
                 </div>
                 <span class="search-count" id="rank-search-count"></span>

@@ -1,3 +1,8 @@
+/* === Scroll offset for anchor links === */
+[id] {
+    scroll-margin-top: 32px;
+}
+
 /* === Fonts === */
 /* Libre Franklin is loaded via <link> tag in <head> — no @font-face needed here */
 
@@ -467,22 +472,27 @@ th[data-sort="desc"]::after {
 
 /* === Pagination === */
 .pagination-controls {
-    margin: 1rem 0;
-    padding: 8px 12px;
+    margin: 12px 0 4px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.pagination-controls .page-info {
+    font-size: 13px;
+    color: #64748b;
+    white-space: nowrap;
+}
+.page-buttons {
+    display: flex;
     align-items: center;
     gap: 4px;
-    background: #f8fafb;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
 }
-
-.pagination-controls button {
-    padding: 7px 14px;
-    min-width: 34px;
-    height: 34px;
-    border: 1px solid #dde2e9;
+.page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
     background: #fff;
     color: #64748b;
@@ -492,32 +502,32 @@ th[data-sort="desc"]::after {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
-
-.pagination-controls button:hover:not([disabled]) {
+.page-btn:hover:not([disabled]):not(.active) {
     background: #f1f5f9;
     border-color: #cbd5e1;
     color: #334155;
 }
-
-.pagination-controls button.active {
-    background: #eef4fa;
-    border-color: #b8c9e0;
-    color: #2e5f8a;
-    font-weight: 700;
+.page-btn.active {
+    background: #b6cbe1;
+    border-color: #b6cbe1;
+    color: #152a47;
 }
-
-.pagination-controls button[disabled] {
+.page-btn[disabled] {
     opacity: 0.3;
     cursor: not-allowed;
 }
-
-.pagination-controls .page-info {
-    font-size: 13px;
-    color: #64748b;
-    white-space: nowrap;
-    padding: 0 4px;
+.page-prev, .page-next {
+    font-size: 16px;
+    font-weight: 600;
+}
+.page-ellipsis {
+    min-width: 24px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    user-select: none;
 }
 
 /* === Search === */
@@ -546,6 +556,11 @@ th[data-sort="desc"]::after {
 }
 .search-input::placeholder {
     color: #94a3b8;
+}
+.search-input:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
 }
 
 .search-count {
@@ -731,6 +746,8 @@ pre code.hljs {
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     transition: border-color 0.15s;
+    display: flex;
+    flex-direction: column;
 }
 .eq-card:hover {
     border-color: #b8c9e0;
@@ -760,6 +777,7 @@ pre code.hljs {
     justify-content: center;
     min-height: 100px;
     background: #f8fafb;
+    flex: 1;
 }
 .eq-body img {
     width: 80%;
@@ -980,14 +998,28 @@ pre code.hljs {
     max-height: 600px;
 }
 .toc ul {
-    padding: 12px 16px 14px 32px;
+    padding: 12px 16px 14px 20px;
     margin: 0;
     columns: 3;
     column-gap: 20px;
+    list-style: none;
 }
 .toc li {
     break-inside: avoid;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    padding-left: 18px;
+    position: relative;
+}
+.toc li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid #b6cbe1;
+    background: transparent;
 }
 .toc li a {
     font-weight: normal;
@@ -1061,10 +1093,14 @@ a[href="#"].legacy-top {
         width: 100%;
     }
 
-    .pagination-controls button {
-        padding: 8px;
-        min-width: 38px;
-        height: 38px;
+    .page-btn {
+        min-width: 36px;
+        height: 36px;
+    }
+    .pagination-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
     }
 
     /* Equation cards stack vertically on narrow screens */

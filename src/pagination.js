@@ -67,11 +67,6 @@ function buildTable(container, data, fileType) {
     // Pagination controls
     const controls = document.createElement('div');
     controls.className = 'pagination-controls';
-    controls.innerHTML = `
-        <button class="prev-btn" disabled>&laquo;</button>
-        <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
-        <button class="next-btn">&raquo;</button>
-    `;
     container.appendChild(controls);
 
     const rowsList = Array.from(tbody.children);
@@ -82,10 +77,7 @@ function buildTable(container, data, fileType) {
         rowsPerPage: 10,
         table: table,
         tbody: tbody,
-        prevBtn: controls.querySelector('.prev-btn'),
-        nextBtn: controls.querySelector('.next-btn'),
-        currentPageEl: controls.querySelector('.current-page'),
-        totalPagesEl: controls.querySelector('.total-pages')
+        controls: controls
     };
     panelState[fileType] = state;
 
@@ -113,29 +105,91 @@ function buildTable(container, data, fileType) {
         });
     });
 
-    // Pagination buttons
-    state.prevBtn.addEventListener('click', () => {
-        if (state.currentPage > 1) { state.currentPage--; updatePanelDisplay(state); }
-    });
-    state.nextBtn.addEventListener('click', () => {
-        const tp = Math.ceil(state.displayedRows.length / state.rowsPerPage);
-        if (state.currentPage < tp) { state.currentPage++; updatePanelDisplay(state); }
-    });
-
     updatePanelDisplay(state);
+}
+
+function getPageRange(current, total) {
+    // Returns array of page numbers and '…' strings
+    if (total <= 7) {
+        var pages = [];
+        for (var i = 1; i <= total; i++) pages.push(i);
+        return pages;
+    }
+    var pages = [1];
+    var lo = Math.max(2, current - 1);
+    var hi = Math.min(total - 1, current + 1);
+    // Shift window if near edges
+    if (current <= 3) { lo = 2; hi = 4; }
+    if (current >= total - 2) { lo = total - 3; hi = total - 1; }
+    if (lo > 2) pages.push('…');
+    for (var i = lo; i <= hi; i++) pages.push(i);
+    if (hi < total - 1) pages.push('…');
+    pages.push(total);
+    return pages;
 }
 
 function updatePanelDisplay(state) {
     if (!state) return;
     const tp = Math.max(1, Math.ceil(state.displayedRows.length / state.rowsPerPage));
+    if (state.currentPage > tp) state.currentPage = tp;
     const start = (state.currentPage - 1) * state.rowsPerPage;
     const end = start + state.rowsPerPage;
     state.rowsList.forEach(r => r.style.display = 'none');
     state.displayedRows.slice(start, end).forEach(r => r.style.display = '');
-    state.currentPageEl.textContent = state.currentPage;
-    state.totalPagesEl.textContent = tp;
-    state.prevBtn.disabled = state.currentPage === 1;
-    state.nextBtn.disabled = state.currentPage === tp;
+
+    // Render pagination controls
+    const c = state.controls;
+    c.innerHTML = '';
+
+    const total = state.displayedRows.length;
+    const showStart = total === 0 ? 0 : start + 1;
+    const showEnd = Math.min(end, total);
+
+    // Info text
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = total === 0 ? 'No results' : showStart + '–' + showEnd + ' of ' + total;
+    c.appendChild(info);
+
+    if (tp <= 1) return;
+
+    const btnWrap = document.createElement('div');
+    btnWrap.className = 'page-buttons';
+
+    // Prev
+    const prev = document.createElement('button');
+    prev.innerHTML = '‹';
+    prev.className = 'page-btn page-prev';
+    prev.disabled = state.currentPage === 1;
+    prev.addEventListener('click', () => { state.currentPage--; updatePanelDisplay(state); });
+    btnWrap.appendChild(prev);
+
+    // Numbered buttons
+    const pages = getPageRange(state.currentPage, tp);
+    pages.forEach(p => {
+        if (p === '…') {
+            const ell = document.createElement('span');
+            ell.className = 'page-ellipsis';
+            ell.textContent = '…';
+            btnWrap.appendChild(ell);
+        } else {
+            const btn = document.createElement('button');
+            btn.className = 'page-btn' + (p === state.currentPage ? ' active' : '');
+            btn.textContent = p;
+            btn.addEventListener('click', () => { state.currentPage = p; updatePanelDisplay(state); });
+            btnWrap.appendChild(btn);
+        }
+    });
+
+    // Next
+    const next = document.createElement('button');
+    next.innerHTML = '›';
+    next.className = 'page-btn page-next';
+    next.disabled = state.currentPage === tp;
+    next.addEventListener('click', () => { state.currentPage++; updatePanelDisplay(state); });
+    btnWrap.appendChild(next);
+
+    c.appendChild(btnWrap);
 }
 
 function applySearch(term) {
@@ -180,8 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!release) {
             // Fold closed
             if (rankContent) rankContent.classList.remove('open');
-            if (searchContainer) searchContainer.style.display = 'none';
-            if (searchInput) { searchInput.value = ''; }
+            if (searchInput) { searchInput.value = ''; searchInput.disabled = true; }
             if (searchCount) { searchCount.textContent = ''; }
             // Clear after transition
             setTimeout(() => {
@@ -209,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
         buildTable(document.getElementById('table-container-domain'), domainData, 'domain');
         buildTable(document.getElementById('table-container-host'), hostData, 'host');
 
-        // Show search bar and re-apply any existing search term
-        if (searchContainer) searchContainer.style.display = '';
+        // Enable search bar and re-apply any existing search term
+        if (searchInput) searchInput.disabled = false;
         var term = searchInput ? searchInput.value.toLowerCase() : '';
         if (term) {
             applySearch(term);

@@ -264,6 +264,9 @@
             if (canvas && typeof window.addChartTouchPan === 'function') {
                 window.addChartTouchPan(canvas, ctrl);
             }
+            if (canvas && typeof window.addChartWheelPan === 'function') {
+                window.addChartWheelPan(canvas, ctrl);
+            }
         }
     }
 

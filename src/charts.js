@@ -537,6 +537,38 @@
         }, { passive: true });
     }
 
+    /* ================================================================
+       Wheel pan — scroll left/right (or shift+scroll) on the chart
+       canvas to pan the visible window when zoomed in.
+       ================================================================ */
+
+    function addWheelPan(canvas, sliderCtrl) {
+        if (!sliderCtrl) return;
+
+        canvas.addEventListener('wheel', function(e) {
+            var st = sliderCtrl.getState();
+            /* only pan if zoomed in */
+            if (st.end - st.start >= st.total - 1) return;
+
+            /* Only respond to horizontal scroll (trackpad two-finger, etc.)
+               Vertical scroll (deltaY) always passes through to the page */
+            var delta = e.deltaX;
+            if (delta === 0) return;
+
+            e.preventDefault();
+
+            var span = st.end - st.start;
+            /* Scale: one "tick" (~100px delta) shifts by ~1/6 of visible span */
+            var shift = Math.round((delta / 100) * Math.max(1, span / 6));
+            if (shift === 0) shift = delta > 0 ? 1 : -1;
+
+            var newStart = st.start + shift;
+            if (newStart < 0) newStart = 0;
+            if (newStart + span > st.total - 1) newStart = st.total - 1 - span;
+            sliderCtrl.setRange(newStart, newStart + span);
+        }, { passive: false });
+    }
+
     /* --- Initialize all charts + sliders on page load --- */
     function initAllCharts() {
         window.chartInstances = {};
@@ -553,6 +585,7 @@
                 var labels = window.CHART_DATA[metric].labels || window.CHART_DATA[metric].releases;
                 var ctrl = createRangeSlider(chart, sliderEl, labels);
                 addTouchPan(canvas, ctrl);
+                addWheelPan(canvas, ctrl);
             }
         });
     }
@@ -560,6 +593,7 @@
     /* Expose for reuse by domain-lookup.js */
     window.createRangeSlider = createRangeSlider;
     window.addChartTouchPan = addTouchPan;
+    window.addChartWheelPan = addWheelPan;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initAllCharts);
