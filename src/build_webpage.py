@@ -138,14 +138,20 @@ def prepare_chart_data(combined_data, descriptions, date_labels=None):
     domain_df = combined_data[combined_data['source'] == 'domain'].set_index('release')
     host_df = combined_data[combined_data['source'] == 'host'].set_index('release')
 
+    # Map description keys to data columns where they differ
+    col_aliases = {
+        'avgdegree': 'avgoutdegree',
+    }
+
     for col in descriptions.keys():
         if col in excluded:
             continue
-        if col not in combined_data.columns:
+        data_col = col_aliases.get(col, col)
+        if data_col not in combined_data.columns:
             continue
-        if has_comma_separated_values(combined_data[col]):
+        if has_comma_separated_values(combined_data[data_col]):
             continue
-        if has_zero_signal(combined_data[col]):
+        if has_zero_signal(combined_data[data_col]):
             continue
 
         domain_vals = []
@@ -153,7 +159,7 @@ def prepare_chart_data(combined_data, descriptions, date_labels=None):
         for r in all_releases:
             # Domain value
             if r in domain_df.index:
-                v = domain_df.loc[r, col]
+                v = domain_df.loc[r, data_col]
                 # Handle case where loc returns a Series (duplicate index)
                 if isinstance(v, pd.Series):
                     v = v.iloc[0]
@@ -162,7 +168,7 @@ def prepare_chart_data(combined_data, descriptions, date_labels=None):
                 domain_vals.append(None)
             # Host value
             if r in host_df.index:
-                v = host_df.loc[r, col]
+                v = host_df.loc[r, data_col]
                 if isinstance(v, pd.Series):
                     v = v.iloc[0]
                 host_vals.append(float(v) if pd.notna(v) else None)
@@ -450,7 +456,7 @@ html_content += "<br><p>Each of these ranks files is multiple GiB, so piping to 
 
 html_content += '<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>\n'
 
-html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>.</p>\n"
+html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>. For more details, see the paper <a href='https://arxiv.org/abs/1308.2140' target='_blank' rel='noopener noreferrer nofollow'>Axioms for Centrality</a> by Boldi and Vigna (2013) and the talk <a href='https://www.youtube.com/watch?v=cnGJtGP4gL4' target='_blank' rel='noopener noreferrer nofollow'>A modern view of centrality measures</a>.</p>\n"
 
 html_content += """<div class="eq-grid">
   <div class="eq-card">
