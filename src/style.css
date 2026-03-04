@@ -669,16 +669,67 @@ pre code.hljs {
     background: #64748b;
 }
 
-/* === LaTeX images === */
-.latex {
-    max-width: 90%;
-    display: flex;
-    gap: 20px;
+/* === Equation cards === */
+.eq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
 }
-.latex img {
-    width: 33%;
-    max-width: 240px;
+
+.eq-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: border-color 0.15s;
+}
+.eq-card:hover {
+    border-color: #b8c9e0;
+}
+
+.eq-header {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eq-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #152a47;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eq-body {
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    background: #f8fafb;
+}
+.eq-body img {
+    width: 80%;
+    max-width: 260px;
     height: auto;
+}
+
+.eq-footer {
+    padding: 8px 14px 10px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.eq-source {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #64748b;
+    word-break: break-all;
 }
 
 /* === TOC === */
@@ -966,14 +1017,9 @@ a[href="#"].legacy-top {
         height: 38px;
     }
 
-    /* LaTeX equations stack vertically on narrow screens */
-    .latex {
-        flex-direction: column;
-        align-items: center;
-    }
-    .latex img {
-        width: 70%;
-        max-width: 280px;
+    /* Equation cards stack vertically on narrow screens */
+    .eq-grid {
+        grid-template-columns: 1fr;
     }
 
     /* Select dropdowns go full width */

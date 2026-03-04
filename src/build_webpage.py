@@ -445,15 +445,35 @@ html_content += "<br><p>Each of these ranks files is multiple GiB, so piping to 
 
 html_content += '<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>\n'
 
-html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> (that's the equation below and on the <i>left</i>) considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>.</p>\n"
+html_content += "<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>.</p>\n"
 
-html_content += """<div class="latex">
-  <img src="img/harmcen.svg" alt="Harmonic Centrality equation">
-  <img src="img/pagerank.svg" alt="PageRank equation">
+html_content += """<div class="eq-grid">
+  <div class="eq-card">
+    <div class="eq-header">
+      <span class="eq-name">Harmonic Centrality</span>
+    </div>
+    <div class="eq-body">
+      <img src="img/harmcen.svg" alt="Harmonic Centrality: H(v) = sum of 1/d(v,u) for all u not equal to v">
+    </div>
+    <div class="eq-footer">
+      <span class="eq-source">H(v) = &sum;<sub>u&ne;v</sub> 1 / d(v, u)</span>
+    </div>
+  </div>
+  <div class="eq-card">
+    <div class="eq-header">
+      <span class="eq-name">PageRank</span>
+    </div>
+    <div class="eq-body">
+      <img src="img/pagerank.svg" alt="PageRank: PR(v) = sum of PR(u)/L(u) for all u in backlinks of v">
+    </div>
+    <div class="eq-footer">
+      <span class="eq-source">PR(v) = &sum;<sub>u&isin;B<sub>v</sub></sub> PR(u) / L(u)</span>
+    </div>
+  </div>
 </div>
 """
 
-html_content += "<br><p>With <a href='https://en.wikipedia.org/wiki/PageRank' target='_blank' rel='noopener noreferrer nofollow'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank' rel='noopener noreferrer nofollow'>PageRankParallelGaussSeidel</a>.</p>\n"
+html_content += "<br><p>With <a href='https://en.wikipedia.org/wiki/PageRank' target='_blank' rel='noopener noreferrer nofollow'>PageRank</a>, each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank' rel='noopener noreferrer nofollow'>PageRankParallelGaussSeidel</a>.</p>\n"
 
 html_content += "<p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>\n"
 

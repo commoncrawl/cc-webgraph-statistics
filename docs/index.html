@@ -697,16 +697,67 @@ pre code.hljs {
     background: #64748b;
 }
 
-/* === LaTeX images === */
-.latex {
-    max-width: 90%;
-    display: flex;
-    gap: 20px;
+/* === Equation cards === */
+.eq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
 }
-.latex img {
-    width: 33%;
-    max-width: 240px;
+
+.eq-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: border-color 0.15s;
+}
+.eq-card:hover {
+    border-color: #b8c9e0;
+}
+
+.eq-header {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eq-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #152a47;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eq-body {
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    background: #f8fafb;
+}
+.eq-body img {
+    width: 80%;
+    max-width: 260px;
     height: auto;
+}
+
+.eq-footer {
+    padding: 8px 14px 10px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.eq-source {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #64748b;
+    word-break: break-all;
 }
 
 /* === TOC === */
@@ -994,14 +1045,9 @@ a[href="#"].legacy-top {
         height: 38px;
     }
 
-    /* LaTeX equations stack vertically on narrow screens */
-    .latex {
-        flex-direction: column;
-        align-items: center;
-    }
-    .latex img {
-        width: 70%;
-        max-width: 280px;
+    /* Equation cards stack vertically on narrow screens */
+    .eq-grid {
+        grid-template-columns: 1fr;
     }
 
     /* Select dropdowns go full width */
@@ -1338,7 +1384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="cc-hero-inner">
         <img class="full-width-image" src="img/masthead.webp" alt="decorative">
         <div class="update-info">
-            <span>Updated 2026-03-03</span>
+            <span>Updated 2026-03-04</span>
             <span class="update-sep"></span>
             <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank" rel="noopener noreferrer nofollow">cc-main-2025-26-dec-jan-feb</a></span>
         </div>
@@ -1444,12 +1490,32 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
         | head -n 1001
 </code></pre><br><p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>
 <div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>
-<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> (that's the equation below and on the <i>left</i>) considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>.</p>
-<div class="latex">
-  <img src="img/harmcen.svg" alt="Harmonic Centrality equation">
-  <img src="img/pagerank.svg" alt="PageRank equation">
+<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>.</p>
+<div class="eq-grid">
+  <div class="eq-card">
+    <div class="eq-header">
+      <span class="eq-name">Harmonic Centrality</span>
+    </div>
+    <div class="eq-body">
+      <img src="img/harmcen.svg" alt="Harmonic Centrality: H(v) = sum of 1/d(v,u) for all u not equal to v">
+    </div>
+    <div class="eq-footer">
+      <span class="eq-source">H(v) = &sum;<sub>u&ne;v</sub> 1 / d(v, u)</span>
+    </div>
+  </div>
+  <div class="eq-card">
+    <div class="eq-header">
+      <span class="eq-name">PageRank</span>
+    </div>
+    <div class="eq-body">
+      <img src="img/pagerank.svg" alt="PageRank: PR(v) = sum of PR(u)/L(u) for all u in backlinks of v">
+    </div>
+    <div class="eq-footer">
+      <span class="eq-source">PR(v) = &sum;<sub>u&isin;B<sub>v</sub></sub> PR(u) / L(u)</span>
+    </div>
+  </div>
 </div>
-<br><p>With <a href='https://en.wikipedia.org/wiki/PageRank' target='_blank' rel='noopener noreferrer nofollow'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank' rel='noopener noreferrer nofollow'>PageRankParallelGaussSeidel</a>.</p>
+<br><p>With <a href='https://en.wikipedia.org/wiki/PageRank' target='_blank' rel='noopener noreferrer nofollow'>PageRank</a>, each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank' rel='noopener noreferrer nofollow'>PageRankParallelGaussSeidel</a>.</p>
 <p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>
 
 <div class="domain-lookup" id="domain-lookup">
