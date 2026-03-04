@@ -32,13 +32,13 @@
         if (value === null || value === undefined) return 'N/A';
         var abs = Math.abs(value);
         if (abs === 0) return '0';
-        if (abs >= 1e12) return (value / 1e12).toFixed(2) + 'T';
-        if (abs >= 1e9) return (value / 1e9).toFixed(2) + 'B';
-        if (abs >= 1e6) return (value / 1e6).toFixed(2) + 'M';
-        if (abs >= 1e3) return (value / 1e3).toFixed(1) + 'K';
-        if (abs < 0.01 && abs !== 0) return value.toExponential(2);
-        if (abs < 1) return value.toFixed(4);
-        return value.toFixed(2);
+        if (abs >= 1e12) return (value / 1e12).toFixed(1) + 'T';
+        if (abs >= 1e9) return (value / 1e9).toFixed(1) + 'B';
+        if (abs >= 1e6) return (value / 1e6).toFixed(1) + 'M';
+        if (abs >= 1e3) return (value / 1e3).toFixed(0) + 'K';
+        if (abs < 0.01 && abs !== 0) return value.toExponential(1);
+        if (abs < 1) return value.toFixed(2);
+        return Math.round(value).toString();
     }
 
     function formatTooltipValue(value) {
@@ -305,8 +305,8 @@
 
     function pointRadius() { return isNarrow() ? 2 : 3.5; }
     function pointHoverRadius() { return isMobile() ? 5 : 6; }
-    function tickFont()   { return isNarrow() ? 9 : 11; }
-    function legendFont()  { return isNarrow() ? 11 : 13; }
+    function tickFont()   { return isNarrow() ? 9 : isMobile() ? 11 : 13; }
+    function legendFont()  { return isNarrow() ? 11 : isMobile() ? 12 : 14; }
     function xMaxTicks()   { return isNarrow() ? 6 : 14; }
     function yMaxTicks()   { return isNarrow() ? 5 : 8; }
 
@@ -589,6 +589,32 @@
             }
         });
     }
+
+    /* --- Update font sizes on resize --- */
+    var resizeTimer = null;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            var charts = window.chartInstances;
+            if (!charts) return;
+            Object.keys(charts).forEach(function(key) {
+                var chart = charts[key];
+                if (!chart) return;
+                var opts = chart.options;
+                opts.scales.x.ticks.font.size = tickFont();
+                opts.scales.y.ticks.font.size = tickFont();
+                opts.plugins.legend.labels.font.size = legendFont();
+                opts.plugins.legend.labels.padding = isNarrow() ? 8 : 16;
+                opts.plugins.legend.labels.boxWidth = isNarrow() ? 6 : 8;
+                opts.plugins.legend.labels.boxHeight = isNarrow() ? 6 : 8;
+                chart.data.datasets.forEach(function(ds) {
+                    ds.pointRadius = pointRadius();
+                    ds.pointHoverRadius = pointHoverRadius();
+                });
+                chart.update('none');
+            });
+        }, 200);
+    });
 
     /* Expose for reuse by domain-lookup.js */
     window.createRangeSlider = createRangeSlider;

@@ -40,6 +40,8 @@ function buildTable(container, data, fileType) {
         return;
     }
 
+    const tableWrap = document.createElement('div');
+    tableWrap.className = 'table-scroll-wrap';
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
@@ -62,7 +64,8 @@ function buildTable(container, data, fileType) {
         tbody.appendChild(tr);
     });
     table.appendChild(tbody);
-    container.appendChild(table);
+    tableWrap.appendChild(table);
+    container.appendChild(tableWrap);
 
     // Pagination controls
     const controls = document.createElement('div');

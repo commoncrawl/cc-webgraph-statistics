@@ -389,6 +389,20 @@ select:hover {
 }
 
 /* === Tables === */
+.table-scroll-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    border: 1px solid #dde2e9;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.table-scroll-wrap table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    width: auto;
+    min-width: 100%;
+}
 table {
     border-collapse: separate;
     border-spacing: 0;
@@ -430,6 +444,7 @@ td {
     border-bottom: 1px solid #f1f5f9;
     vertical-align: middle;
     font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
 }
 
 tr:last-child td {
@@ -497,6 +512,8 @@ th[data-sort="desc"]::after {
     display: flex;
     align-items: center;
     gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .page-btn {
     min-width: 32px;
@@ -590,7 +607,9 @@ pre[class*="hljs"],
     border: 1px solid #e2e8f0;
     font-size: 13px;
     line-height: 1.6;
-    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 pre code,
@@ -658,6 +677,9 @@ pre code.hljs {
 }
 .chart-container p:last-child {
     margin-bottom: 0;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
 }
 
 /* === Interactive chart canvas === */
@@ -675,7 +697,7 @@ pre code.hljs {
 /* === Range slider === */
 .chart-range-slider {
     position: relative;
-    margin: 4px 0 14px;
+    margin: 4px 0 24px;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
@@ -790,8 +812,8 @@ pre code.hljs {
     flex: 1;
 }
 .eq-body img {
-    width: 80%;
-    max-width: 260px;
+    width: 90%;
+    max-width: 360px;
     height: auto;
 }
 
@@ -1074,61 +1096,25 @@ a[href="#"].legacy-top {
     }
 
     /* Larger touch targets for range slider on mobile */
-    .rs-track {
-        height: 40px;
-    }
-    .rs-handle {
-        width: 22px;
-    }
+    .rs-track { height: 40px; }
+    .rs-handle { width: 22px; }
     .rs-handle-l { left: -11px; }
     .rs-handle-r { right: -11px; }
-    .rs-handle span {
-        width: 4px;
-        height: 18px;
-    }
+    .rs-handle span { width: 4px; height: 18px; }
 
-    /* Tables: horizontal scroll */
-    .rank-panel table {
-        display: block;
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-        overflow-x: auto;
-    }
+    .search-container { flex-wrap: wrap; }
+    .search-input { width: 100%; }
 
-    .search-container {
-        flex-wrap: wrap;
-    }
-
-    .search-input {
-        width: 100%;
-    }
-
-    .page-btn {
-        min-width: 36px;
-        height: 36px;
-    }
-    .pagination-controls {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    /* Equation cards stack vertically on narrow screens */
-    .eq-grid {
-        grid-template-columns: 1fr;
-    }
+    /* Equation cards stack vertically */
+    .eq-grid { grid-template-columns: 1fr; }
 
     /* Select dropdowns go full width */
-    select {
-        max-width: 100%;
-    }
+    select { max-width: 100%; }
 
-    /* TOC single column on mobile */
-    .toc ul {
-        columns: 1;
-    }
+    /* TOC single column */
+    .toc ul { columns: 1; }
 
-    /* Info cards stack on mobile */
+    /* Info cards stack */
     .info-cards {
         grid-template-columns: 1fr;
         gap: 14px;
@@ -1168,9 +1154,81 @@ a[href="#"].legacy-top {
         margin: 4px -4px 0;
     }
 
+    /* Code blocks: smaller and scrollable on narrow */
+    pre,
+    pre[class*="hljs"],
+    .hljs {
+        font-size: 11px;
+        line-height: 1.5;
+        padding: 14px;
+        -webkit-overflow-scrolling: touch;
+    }
+
     /* Domain lookup: tighter on narrow */
     .domain-lookup { padding: 14px 10px 16px; }
     .domain-chart-wrap .chart-wrapper {
         height: 280px;     /* dual-axis needs a bit more height */
     }
+
+    /* Tighter table cells on narrow */
+    th, td { padding: 8px 10px; }
+    th { font-size: 10px; }
+    td { font-size: 12px; }
+
+    /* Pagination: compact layout */
+    .pagination-controls .page-info { font-size: 12px; }
+    .page-btn {
+        min-width: 30px;
+        height: 30px;
+        padding: 0 5px;
+        font-size: 11px;
+    }
+    .page-prev, .page-next { font-size: 14px; }
+    .page-ellipsis { min-width: 16px; font-size: 12px; }
+
+    /* Rank controls stack vertically */
+    .rank-controls {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    /* Tabs: tighter */
+    .rank-tabs {
+        margin: 8px 10px 0;
+    }
+    .rank-tab {
+        padding: 5px 0;
+        font-size: 11px;
+    }
+
+    /* Hero: remove bottom padding since image goes to edge */
+    .cc-hero-inner { padding: 10px 10px 8px; }
+
+    /* Update bar tighter */
+    .update-info { padding: 8px 10px; font-size: 12px; }
+
+    /* Headings and text: tighter for portrait */
+    h2 { font-size: 18px; margin-top: 24px; margin-bottom: 8px; }
+    h3 { font-size: 15px; margin-top: 18px; margin-bottom: 6px; }
+    h4 { font-size: 14px; margin-top: 16px; margin-bottom: 4px; }
+    p { font-size: 14px; margin-bottom: 12px; }
+
+    /* Tighter section spacing */
+    .cc-twrap > div { margin-bottom: 28px; }
+
+    /* TOC: compact */
+    .toc-header span:first-child { font-size: 12px; }
+    .toc li { margin-bottom: 4px; padding-left: 14px; }
+    .toc li::before { width: 6px; height: 6px; top: 6px; }
+    .toc li a { font-size: 13px; }
+    .toc ul { padding: 10px 12px 12px 16px; }
+
+    /* Equation cards: tighter */
+    .eq-card { border-radius: 8px; }
+    .eq-header { padding: 8px 10px 6px; }
+    .eq-name { font-size: 12px; }
+    .eq-body { padding: 18px 10px; min-height: 70px; }
+    .eq-body img { width: 95%; max-width: 300px; }
+    .eq-footer { padding: 6px 10px 8px; }
+    .eq-source { font-size: 11px; }
 }
