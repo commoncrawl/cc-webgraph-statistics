@@ -305,7 +305,6 @@ img {
     flex: 1;
     margin: 0;
     min-width: 0;
-    position: relative;
 }
 .rank-controls .search-input-wrap {
     flex: 1;
@@ -602,11 +601,11 @@ th[data-sort="desc"]::after {
     white-space: nowrap;
     font-size: 13px;
 }
-.rank-controls .search-count {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: 2px;
+.rank-controls .search-container {
+    gap: 0;
+}
+.rank-controls .search-count:not(:empty) {
+    margin-left: 8px;
 }
 .surt-toggle {
     display: inline-flex;

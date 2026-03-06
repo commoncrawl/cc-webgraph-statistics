@@ -353,6 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
             });
+            // Re-apply search filter with updated cell text
+            var term = searchInput ? searchInput.value.toLowerCase() : '';
+            applySearch(term);
         });
     }
 
