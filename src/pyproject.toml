@@ -1,0 +1,10 @@
+[project]
+name = "cc-webgraph-statistics"
+version = "0.1.0"
+description = "Statistics and plots derived from Common Crawl's monthly Web Graphs"
+requires-python = ">=3.8"
+dependencies = [
+    "markdown",
+    "pandas",
+    "tqdm",
+]

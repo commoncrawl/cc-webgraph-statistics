@@ -1,7 +1,6 @@
 MAKEFLAGS += -s
 
 # Variables
-REQUIREMENTS = requirements.txt
 RELEASE_URL = https://index.commoncrawl.org/graphinfo.json
 PREF = => |
 BLUE = \033[34m
@@ -21,19 +20,13 @@ install:
 	perl prep_data.pl host > ../docs/host.tsv && \
 	perl prep_data.pl domain > ../docs/domain.tsv
 	printf "$(PREF)Installing Python dependencies...\n" && \
-	pip install -q -r $(REQUIREMENTS)
+	pip install -q .
 
 # Build the webpage
 .PHONY: build
 build:
 	printf "$(PREF)Building the web page...\n" && \
 	python build_webpage.py
-
-# Build the webpage
-.PHONY: noplot
-noplot:
-	printf "$(PREF)Building the web page without plots...\n" && \
-	python build_webpage.py --no-plots
 
 # Update with the latest release if not already present
 .PHONY: update

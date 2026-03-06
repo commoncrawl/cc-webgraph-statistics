@@ -4,889 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Graph Statistics</title>
+    <title>Common Crawl Web Graph Statistics</title>
+    <meta name="description" content="Interactive visualisations, domain and host rankings, and graph metrics from the Common Crawl Web Graph dataset. Explore PageRank, harmonic centrality, and more across all releases.">
+    <link rel="canonical" href="https://commoncrawl.github.io/cc-webgraph-statistics/">
     <link rel="icon" href="img/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" defer></script>
 
     <meta property="og:title"  content="Common Crawl Web Graph Statistics">
     <meta name="twitter:title" content="Common Crawl Web Graph Statistics">
-    <meta property="og:description"  content="Visualisations and metrics from the Common Crawl Web Graph dataset">
-    <meta name="twitter:description" content="Visualisations and metrics from the Common Crawl Web Graph dataset">
+    <meta property="og:description"  content="Interactive visualisations, domain and host rankings, and graph metrics from the Common Crawl Web Graph dataset.">
+    <meta name="twitter:description" content="Interactive visualisations, domain and host rankings, and graph metrics from the Common Crawl Web Graph dataset.">
     <meta property="og:image"  content="https://commoncrawl.github.io/cc-webgraph-statistics/img/masthead.jpg">
     <meta name="twitter:image" content="https://commoncrawl.github.io/cc-webgraph-statistics/img/masthead.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://commoncrawl.github.io/cc-webgraph-statistics/">
     <meta property="og:type" content="website">
 
-    <style>
-/* === Fonts === */
-@font-face {
-    font-family: 'Libre Franklin';
-    font-weight: 100 900;
-    font-display: swap;
-    src: url('https://fonts.gstatic.com/s/librefranklin/v14/jizOREVItHgc8qDIBgFMh6CDugbg7Q.woff2') format('woff2')
-}
-
-@font-face {
-    font-family: 'IBM Plex Mono';
-    font-weight: 400 700;
-    font-display: swap;
-    src: url('IBMPlexMono-Regular.ttf') format('truetype')
-}
-
-/* === Reset & Body === */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    min-height: 100vh;
-    font-family: 'Libre Franklin', 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: #152a47;
-    background: #f5f7fa;
-    display: flex;
-    flex-direction: column;
-    font-size: 15px;
-    line-height: 1.65;
-}
-
-/* === Header === */
-.cc-header-wrap { border-bottom: 1px solid #e2e8f0; background: #fff; }
-.cc-header {
-    max-width: 1200px; margin: 0 auto; padding: 24px 20px 20px;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
-}
-.cc-logo { height: 32px; margin: 0; }
-.cc-htxt h1 { font-size: 20px; font-weight: 700; color: #152a47; line-height: 1.2; margin-bottom: 0; padding-top: 5px; }
-.cc-htxt p { font-size: 14px; color: #64748b; margin-top: 2px; margin-bottom: 0; line-height: 1.3; }
-
-/* === Main content area === */
-.cc-twrap {
-    max-width: 1200px; margin: 0 auto; padding: 16px 20px 32px;
-    width: 100%; flex: 1;
-}
-
-/* === Footer === */
-.cc-footer { border-top: 1px solid #e2e8f0; background: #fff; margin-top: 8px; }
-.cc-footer-inner {
-    max-width: 1200px; margin: 0 auto;
-    padding: 14px 20px 16px;
-}
-.cc-footer-info { font-size: 11px; color: #94a3b8; line-height: 1.5; }
-.cc-footer-info span { display: block; }
-.cc-footer-info span a { color: #64748b; text-decoration: underline; font-weight: 400; }
-.cc-footer-info span a:hover { color: #2e5f8a; }
-.cc-footer-links { display: inline-flex; gap: 12px; margin-top: 6px; }
-.cc-footer-links a { font-size: 11px; color: #64748b; text-decoration: underline; font-weight: 400; }
-.cc-footer-links a:hover { color: #2e5f8a; }
-
-/* === Typography === */
-h1, h2, h3, h4 { color: #152a47; line-height: 1.25; }
-h2 { font-size: 20px; margin-top: 32px; margin-bottom: 10px; }
-h3 { font-size: 17px; margin-top: 24px; margin-bottom: 8px; }
-h4 { font-size: 15px; margin-top: 20px; margin-bottom: 6px; }
-p { margin-bottom: 16px; }
-ul, ol { margin-bottom: 16px; padding-left: 24px; }
-li { margin-bottom: 4px; }
-
-/* === Links === */
-a {
-    font-weight: 600;
-    color: #152a47;
-    text-decoration: underline;
-    text-decoration-color: #c0c8d4;
-    text-underline-offset: 2px;
-    transition: text-decoration-color 0.15s;
-}
-a:hover {
-    text-decoration-color: #152a47;
-}
-
-/* Footer links override (no underline) */
-.cc-footer-info a,
-.cc-footer-links a {
-    text-decoration: underline;
-}
-
-hr {
-    border: none;
-    height: 1px;
-    background: #e2e8f0;
-    margin: 24px 0;
-}
-
-code {
-    font-size: 13px;
-    background: #f1f5f9;
-    padding: 2px 5px;
-    border-radius: 4px;
-    color: #3a5068;
-}
-
-/* === Page content spacing === */
-.cc-twrap > div {
-    margin-bottom: 40px;
-}
-
-/* === Hero section (masthead + metadata) === */
-.cc-hero {
-    background: #fff;
-    border-bottom: 1px solid #e2e8f0;
-}
-.cc-hero-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px 20px 16px;
-}
-.cc-hero .full-width-image {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 0 0 14px;
-}
-.update-info {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    font-size: 13px;
-    color: #94a3b8;
-}
-.update-info span {
-    white-space: nowrap;
-}
-.update-info a {
-    color: #64748b;
-    font-weight: 600;
-    text-decoration: none;
-    text-decoration-color: transparent;
-}
-.update-info a:hover {
-    color: #152a47;
-    text-decoration: underline;
-    text-decoration-color: #c0c8d4;
-}
-.update-sep {
-    display: inline-block;
-    width: 3px;
-    height: 3px;
-    background: #c0c8d4;
-    border-radius: 50%;
-    margin: 0 10px;
-    vertical-align: middle;
-}
-
-/* === Images === */
-img {
-    max-width: 90%;
-    height: auto;
-    display: block;
-    margin: 20px auto;
-}
-
-/* Prevent logo from being centered by the img rule */
-.cc-logo {
-    display: block;
-    margin: 0;
-    max-width: none;
-}
-
-/* === Download buttons === */
-.download {
-    margin-bottom: 32px;
-}
-.download h2 {
-    margin-top: 0;
-}
-.download-button {
-    margin-right: 8px;
-    margin-bottom: 8px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 9px 18px;
-    background: #fff;
-    color: #152a47;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    text-decoration: none;
-    border-radius: 6px;
-    border: 1px solid #dde2e9;
-    cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-}
-.download-button:hover {
-    background: #f8fafb;
-    border-color: #cbd5e1;
-    text-decoration: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-}
-.download-button i {
-    margin-right: 8px;
-    font-size: 13px;
-    color: #94a3b8;
-}
-
-/* === Dropdowns (Domain/Host rank panels) === */
-.dropdown {
-    margin: 8px 0 24px;
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.dropdown-label {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #64748b;
-    margin-bottom: 12px;
-}
-.dropdown-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.dropdown-controls select {
-    flex-shrink: 0;
-}
-.dropdown-controls .search-container {
-    margin: 0;
-    flex: 0 0 auto;
-}
-.dropdown-controls .search-input {
-    width: 180px;
-    padding: 9px 12px;
-    font-size: 13px;
-}
-.dropdown-content {
-    display: none;
-    margin-top: 16px;
-}
-.dropdown-content.active {
-    display: block;
-}
-
-/* === Select dropdowns === */
-select {
-    width: 100%;
-    max-width: 340px;
-    padding: 9px 36px 9px 12px;
-    border: 1px solid #dde2e9;
-    border-radius: 6px;
-    background-color: #fff;
-    color: #152a47;
-    font-size: 14px;
-    font-weight: 400;
-    font-family: inherit;
-    line-height: 1.5;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%2364748b" viewBox="0 0 16 16"%3E%3Cpath fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"%3E%3C/path%3E%3C/svg%3E');
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 14px;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-select:focus {
-    border-color: #b8c9e0;
-    box-shadow: 0 0 0 3px rgba(46,95,138,0.08);
-}
-select:hover {
-    border-color: #cbd5e1;
-}
-
-/* === Tables === */
-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #dde2e9;
-    border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    overflow: hidden;
-}
-
-th, td {
-    padding: 10px 14px;
-    text-align: left;
-}
-
-th {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #64748b;
-    background: #f8fafb;
-    border-bottom: 2px solid #e2e8f0;
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    transition: color 0.15s;
-    position: relative;
-}
-
-th:hover {
-    color: #152a47;
-}
-
-td {
-    font-size: 13px;
-    color: #152a47;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: middle;
-    font-family: 'IBM Plex Mono', monospace;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr:hover td {
-    background: #f8fafc;
-}
-
-/* Active sort column */
-th[data-sort="asc"],
-th[data-sort="desc"] {
-    color: #2e5f8a;
-}
-th[data-sort="asc"]::after {
-    content: " \25B2";
-    color: #2e5f8a;
-    font-size: 9px;
-}
-th[data-sort="desc"]::after {
-    content: " \25BC";
-    color: #2e5f8a;
-    font-size: 9px;
-}
-
-/* Table header content wrapper */
-.header-content {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 10px 14px;
-    width: 100%;
-    height: 100%;
-}
-
-.sort-indicator {
-    display: inline-block;
-    color: #94a3b8;
-    font-size: 10px;
-}
-
-/* Dropdown table rows */
-.dropdown-content.active table tbody tr {
-    display: table-row;
-}
-.dropdown-content.active table tbody tr[style*="display: none"] {
-    display: none !important;
-}
-
-/* === Pagination === */
-.pagination-controls {
-    margin: 1rem 0;
-    padding: 8px 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    background: #f8fafb;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-}
-
-.pagination-controls button {
-    padding: 7px 14px;
-    min-width: 34px;
-    height: 34px;
-    border: 1px solid #dde2e9;
-    border-radius: 6px;
-    background: #fff;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 13px;
-    font-family: inherit;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-}
-
-.pagination-controls button:hover:not([disabled]) {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: #334155;
-}
-
-.pagination-controls button.active {
-    background: #eef4fa;
-    border-color: #b8c9e0;
-    color: #2e5f8a;
-    font-weight: 700;
-}
-
-.pagination-controls button[disabled] {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.pagination-controls .page-info {
-    font-size: 13px;
-    color: #64748b;
-    white-space: nowrap;
-    padding: 0 4px;
-}
-
-/* === Search === */
-.search-container {
-    margin: 0.75rem 0;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.search-input {
-    padding: 10px 14px;
-    border: 1px solid #dde2e9;
-    border-radius: 6px;
-    width: 240px;
-    max-width: 100%;
-    font-size: 14px;
-    font-family: inherit;
-    color: #152a47;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-.search-input:focus {
-    border-color: #b8c9e0;
-    box-shadow: 0 0 0 3px rgba(46,95,138,0.08);
-}
-.search-input::placeholder {
-    color: #94a3b8;
-}
-
-.search-count {
-    color: #64748b;
-    white-space: nowrap;
-    font-size: 13px;
-}
-
-/* === Code blocks === */
-pre,
-pre[class*="hljs"],
-.hljs {
-    color: #3a5068 !important;
-    background: #fff !important;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    font-size: 13px;
-    line-height: 1.6;
-    overflow-x: auto;
-}
-
-pre code,
-pre code.hljs {
-    background: none !important;
-    padding: 0;
-    border-radius: 0;
-    border: none;
-    color: inherit !important;
-}
-
-/* Highlight.js token overrides to match palette */
-.hljs-comment,
-.hljs-quote { color: #94a3b8; }
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-addition { color: #2e5f8a; }
-.hljs-string,
-.hljs-attribute,
-.hljs-template-variable,
-.hljs-variable { color: #5a7a6a; }
-.hljs-number,
-.hljs-literal { color: #8a5a3a; }
-.hljs-title,
-.hljs-section,
-.hljs-name,
-.hljs-type { color: #152a47; font-weight: 600; }
-
-/* === Layout containers === */
-.container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-.text-section {
-    flex: 1;
-    max-width: 33.33%;
-}
-.image-section {
-    flex: 2;
-}
-.tt-image {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* === Chart containers === */
-.chart-container {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.chart-container img {
-    max-width: 100%;
-    margin: 12px auto;
-    border-radius: 4px;
-}
-.chart-container h4 {
-    margin-top: 0;
-}
-.chart-container p:last-child {
-    margin-bottom: 0;
-}
-
-/* === LaTeX images === */
-.latex {
-    max-width: 90%;
-    display: flex;
-    gap: 20px;
-}
-.latex img {
-    width: 33%;
-    max-width: 240px;
-    height: auto;
-}
-
-/* === TOC === */
-.toc li a {
-    font-weight: normal;
-}
-
-/* === Back to top === */
-a[href="#"] {
-    font-size: 13px;
-    font-weight: 500;
-}
-
-/* === Responsive === */
-@media (max-width: 860px) {
-    .cc-header { padding: 20px 16px 16px; }
-    .cc-hero-inner { padding: 16px 16px 14px; }
-    .cc-twrap { padding: 14px 16px 24px; }
-    .cc-footer-inner { padding: 14px 16px; }
-    .dropdown { padding: 16px; }
-}
-
-@media (max-width: 480px) {
-    .cc-header { padding: 16px 14px 14px; gap: 8px; }
-    .cc-logo { height: 26px; }
-    .cc-htxt h1 { font-size: 17px; }
-    .cc-htxt p { font-size: 13px; }
-    .cc-hero-inner { padding: 14px 14px 12px; }
-    .update-info { flex-wrap: wrap; gap: 0; }
-    .update-sep { display: none; }
-    .update-info span { display: block; }
-    .cc-twrap { padding: 12px 14px 20px; }
-    .cc-footer-inner { padding: 12px 14px; }
-    .dropdown { padding: 14px; }
-    .dropdown-controls { gap: 8px; }
-    .dropdown-controls .search-input { width: 100%; }
-}
-
-@media (max-width: 768px) {
-    .dropdown-content table {
-        display: block;
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-        overflow-x: auto;
-    }
-
-    .search-container {
-        flex-wrap: wrap;
-    }
-
-    .search-input {
-        width: 100%;
-    }
-
-    .pagination-controls button {
-        padding: 8px;
-        min-width: 38px;
-        height: 38px;
-    }
-}
-
-    </style>
-    <script>
-// Rank data is loaded on demand from JSON files in ranks/ directory.
-// Each file is named {type}-{release}.json and contains:
-//   { "header": ["col1", ...], "rows": [["val1", ...], ...] }
-
-const rankCache = {};
-
-async function fetchRankData(fileType, release) {
-    const key = `${fileType}-${release}`;
-    if (rankCache[key]) return rankCache[key];
-
-    const url = `ranks/${fileType}-${release}.json`;
-    try {
-        const resp = await fetch(url);
-        if (!resp.ok) return null;
-        const data = await resp.json();
-        rankCache[key] = data;
-        return data;
-    } catch (e) {
-        console.error(`Failed to load ${url}:`, e);
-        return null;
-    }
-}
-
-function buildTable(container, data) {
-    // Clear previous content
-    container.innerHTML = '';
-
-    if (!data || !data.header.length || !data.rows.length) {
-        container.innerHTML = '<p>No data available.</p>';
-        return;
-    }
-
-    // Build table element
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    data.header.forEach(col => {
-        const th = document.createElement('th');
-        th.textContent = col;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    const tbody = document.createElement('tbody');
-    data.rows.forEach(row => {
-        const tr = document.createElement('tr');
-        row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    container.appendChild(table);
-
-    // Set up search, sort, and pagination on this table
-    setupTableInteractions(container, table);
-}
-
-function setupTableInteractions(container, table) {
-    const tbody = table.querySelector('tbody');
-    const rowsList = Array.from(tbody.children);
-    let displayedRows = rowsList;
-    let currentPage = 1;
-    const rowsPerPage = 10;
-
-    // Create search container
-    const dropdown = container.closest('.dropdown');
-    const controlsRow = dropdown ? dropdown.querySelector('.dropdown-controls') : null;
-
-    // Remove any existing search container from controls row
-    if (controlsRow) {
-        const existing = controlsRow.querySelector('.search-container');
-        if (existing) existing.remove();
-    }
-
-    const searchContainer = document.createElement('div');
-    searchContainer.className = 'search-container';
-    searchContainer.innerHTML = `
-        <input type="text" class="search-input" placeholder="Search table..." autocapitalize="off">
-        <span class="search-count"></span>
-    `;
-
-    // Place search in the controls row if available
-    if (controlsRow) {
-        controlsRow.appendChild(searchContainer);
-    } else {
-        container.insertBefore(searchContainer, table);
-    }
-
-    // Add pagination controls after the table
-    const controls = document.createElement('div');
-    controls.className = 'pagination-controls';
-    controls.innerHTML = `
-        <button class="prev-btn" disabled>&laquo;</button>
-        <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
-        <button class="next-btn">&raquo;</button>
-    `;
-    container.appendChild(controls);
-
-    const elements = {
-        searchInput: searchContainer.querySelector('.search-input'),
-        searchCount: searchContainer.querySelector('.search-count'),
-        prevBtn: controls.querySelector('.prev-btn'),
-        nextBtn: controls.querySelector('.next-btn'),
-        currentPage: controls.querySelector('.current-page'),
-        totalPages: controls.querySelector('.total-pages')
-    };
-
-    function updateDisplay() {
-        const totalPages = Math.max(1, Math.ceil(displayedRows.length / rowsPerPage));
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        rowsList.forEach(row => row.style.display = 'none');
-        displayedRows.slice(start, end).forEach(row => row.style.display = '');
-
-        elements.currentPage.textContent = currentPage;
-        elements.totalPages.textContent = totalPages;
-        elements.prevBtn.disabled = currentPage === 1;
-        elements.nextBtn.disabled = currentPage === totalPages;
-    }
-
-    // Sorting
-    table.querySelectorAll('th').forEach((th, index) => {
-        th.style.cursor = 'pointer';
-        th.addEventListener('click', () => {
-            table.querySelectorAll('th').forEach(header => {
-                if (header !== th) header.removeAttribute('data-sort');
-            });
-
-            const currentSort = th.getAttribute('data-sort');
-            const newSort = currentSort === 'asc' ? 'desc' : 'asc';
-            th.setAttribute('data-sort', newSort);
-
-            let targetRows = displayedRows.length > 0 ? displayedRows : rowsList;
-
-            targetRows.sort((a, b) => {
-                const aVal = a.cells[index].textContent.trim();
-                const bVal = b.cells[index].textContent.trim();
-                const aNum = parseFloat(aVal.replace(/,/g, ''));
-                const bNum = parseFloat(bVal.replace(/,/g, ''));
-
-                if (!isNaN(aNum) && !isNaN(bNum)) {
-                    return newSort === 'asc' ? aNum - bNum : bNum - aNum;
-                }
-                return newSort === 'asc' ?
-                    aVal.localeCompare(bVal) :
-                    bVal.localeCompare(aVal);
-            });
-
-            tbody.innerHTML = "";
-            targetRows.forEach(row => tbody.appendChild(row));
-
-            displayedRows = [...targetRows];
-            currentPage = 1;
-            updateDisplay();
-        });
-    });
-
-    // Search with debounce
-    let searchTimeout = null;
-    elements.searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            const searchTerm = elements.searchInput.value.toLowerCase();
-            if (!searchTerm) {
-                displayedRows = rowsList;
-                elements.searchCount.textContent = '';
-            } else {
-                displayedRows = rowsList.filter(row =>
-                    Array.from(row.cells).some(cell =>
-                        cell.textContent.toLowerCase().includes(searchTerm)
-                    )
-                );
-                elements.searchCount.textContent = `${displayedRows.length} matches`;
-            }
-            currentPage = 1;
-            updateDisplay();
-        }, 300);
-    });
-
-    // Pagination
-    elements.prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updateDisplay();
-        }
-    });
-
-    elements.nextBtn.addEventListener('click', () => {
-        const totalPages = Math.ceil(displayedRows.length / rowsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            updateDisplay();
-        }
-    });
-
-    updateDisplay();
-}
-
-// Handle dropdown change: fetch data and build table
-async function onReleaseSelect(selectEl) {
-    const value = selectEl.value; // e.g. "domain-cc-main-2025-oct-nov-dec"
-    if (!value) return;
-
-    const dashIdx = value.indexOf('-');
-    const fileType = value.substring(0, dashIdx);   // "domain" or "host"
-    const release = value.substring(dashIdx + 1);    // "cc-main-2025-oct-nov-dec"
-
-    const container = document.getElementById(`table-container-${fileType}`);
-    if (!container) return;
-
-    // Show loading state
-    container.innerHTML = '<p>Loading...</p>';
-
-    // Remove search from controls while loading
-    const dropdown = container.closest('.dropdown');
-    if (dropdown) {
-        const existing = dropdown.querySelector('.dropdown-controls .search-container');
-        if (existing) existing.remove();
-    }
-
-    const data = await fetchRankData(fileType, release);
-    buildTable(container, data);
-}
-
-// Wire up dropdowns on page load
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('select[id$="-release-dropdown"]').forEach(dropdown => {
-        dropdown.addEventListener('change', function() {
-            onReleaseSelect(this);
-        });
-    });
-});
-
-    </script>
+    <link rel="stylesheet" href="style.css">
+    <script src="pagination.js" defer></script>
 
 </head>
-<body>
-<div class="cc-header-wrap">
+<body autocapitalize="off">
+<script>
+console.log("%c" +
+"        ,,,        \n" +
+"       (o o)       \n" +
+"   ooO--(_)--Ooo   \n" +
+"                   \n" +
+" Oh hello, curious \n" +
+"  Web Graph user!  \n",
+"font-family:monospace;color:#143171;font-size:12px;");
+console.log("%cCommon Crawl\n%cLike what you see? We're hiring.\nhttps://commoncrawl.org/jobs",
+"font-weight:bold;color:#143171;font-size:12px;","color:#3a5068;font-size:12px;");
+</script>
+<script>
+(function(){
+    var p = new URLSearchParams(window.location.search);
+    if (p.get('embed') === 'domain-lookup') {
+        document.documentElement.classList.add('embed-mode');
+        /* Post height to parent for dynamic iframe resizing */
+        function postHeight() {
+            var h = document.documentElement.scrollHeight;
+            window.parent.postMessage({ccEmbed:'domain-lookup',height:h},'*');
+        }
+        window.addEventListener('DOMContentLoaded', function(){
+            postHeight();
+            new MutationObserver(postHeight).observe(document.body,{childList:true,subtree:true,attributes:true});
+            window.addEventListener('resize', postHeight);
+        });
+    }
+})();
+</script>
+<nav class="cc-header-wrap" aria-label="Site header">
     <header class="cc-header">
-        <a href="https://commoncrawl.org" target="_blank" rel="noopener noreferrer">
+        <a href="./">
           <img src="img/logo.svg" alt="Common Crawl" class="cc-logo">
         </a>
         <div class="cc-htxt">
@@ -894,147 +70,213 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>Visualisations and metrics from the Common Crawl Web Graph dataset</p>
         </div>
     </header>
-</div>
+</nav>
 
+<main>
 <div class="cc-hero">
     <div class="cc-hero-inner">
-        <img class="full-width-image" src="img/masthead.webp" alt="decorative">
-        <div class="update-info">
-            <span>Updated 2026-02-24</span>
-            <span class="update-sep"></span>
-            <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank">cc-main-2025-26-dec-jan-feb</a></span>
-        </div>
+        <img class="full-width-image" src="img/masthead.webp" alt="" draggable="false">
+    </div>
+</div>
+<div class="update-bar">
+    <div class="update-info">
+        <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated 2026-03-06</a></span>
+        <span class="update-sep"></span>
+        <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank" rel="noopener noreferrer nofollow">cc-main-2025-26-dec-jan-feb</a></span>
     </div>
 </div>
 
+<noscript><p style="padding:20px;text-align:center;">This page requires JavaScript for interactive charts and tables. Please enable JavaScript to view the full content.</p></noscript>
+<article>
 <div class="cc-twrap">
 
         <div class="markdown-content">
             <h3>Description</h3>
-            <p>This webpage presents operational <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html">statistics</a> derived from Common Crawl's <a href="https://commoncrawl.org/web-graphs">Web Graph</a> releases, which show the structure and connectivity of the web as captured in the crawl releases. The data consists of host- and domain-level graphs, where hostnames are formatted in reverse domain name notation. These graphs include all types of links, such as those pointing to images, JS libraries, web fonts, and so on. However, only hostnames with valid IANA top-level domains are considered, excluding URLs that use IP addresses as host components.</p>
-<p>The domain-level graphs are constructed by aggregating host-level data at the pay-level domain (PLD) level, using the public suffix list maintained on <a href="https://publicsuffix.org">publicsuffix.org</a>. This methodology provides a comprehensive view of the web's hierarchical structure, which is useful for research in areas like ranking algorithms, graph analysis, and link spam detection.</p>
-<p>For those interested in exploring the Web Graphs, we provide tools and instructions through the <a href="https://github.com/commoncrawl/cc-webgraph">cc-webgraph</a> project on GitHub. We also have a <a href="https://github.com/commoncrawl/cc-notebooks/blob/main/cc-webgraph-statistics/topology_stats.ipynb">Jupyter Notebook</a> in our cc-notebooks repository.  Some related papers on how these Web Graphs can be used can be found in the <a href="#related-reading">Related Reading</a> section below. Additionally, the list of graph releases is accessible via the <a href="https://index.commoncrawl.org/graphinfo.json">graphinfo.json</a> file.</p>
-<p>The top ten highest ranked hosts and domains from each release are listed below. Ranks are derived from <a href="https://en.wikipedia.org/wiki/Centrality">Harmonic Centrality</a>, and we also show <a href="https://en.wikipedia.org/wiki/PageRank">PageRank</a> for comparison.</p>
+            <p>This webpage presents operational <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html" target="_blank" rel="noopener noreferrer nofollow">statistics</a> derived from Common Crawl's <a href="https://index.commoncrawl.org/web-graphs-index.html" target="_blank" rel="noopener noreferrer nofollow">Web Graph</a> releases, which show the structure and connectivity of the web as captured in the crawl releases. The data consists of host- and domain-level graphs, where hostnames are formatted in reverse domain name notation. These graphs include all types of links, such as those pointing to images, JS libraries, web fonts, and so on. However, only hostnames with valid IANA top-level domains are considered, excluding URLs that use IP addresses as host components.</p>
+<p>The domain-level graphs are constructed by aggregating host-level data at the pay-level domain (PLD) level, using the public suffix list maintained on <a href="https://publicsuffix.org" target="_blank" rel="noopener noreferrer nofollow">publicsuffix.org</a>. This methodology provides a comprehensive view of the web's hierarchical structure, which is useful for research in areas like ranking algorithms, graph analysis, and link spam detection.</p>
+<p>For those interested in exploring the Web Graphs, we provide tools and instructions through the <a href="https://github.com/commoncrawl/cc-webgraph" target="_blank" rel="noopener noreferrer nofollow">cc-webgraph</a> project on GitHub. We also have a <a href="https://github.com/commoncrawl/cc-notebooks/blob/main/cc-webgraph-statistics/topology_stats.ipynb" target="_blank" rel="noopener noreferrer nofollow">Jupyter Notebook</a> in our <a href="https://github.com/commoncrawl/cc-notebooks/" target="_blank" rel="noopener noreferrer nofollow">cc-notebooks</a> repository.  Some related papers on how these Web Graphs can be used can be found in the <a href="#related-reading">Related Reading</a> section below. Additionally, the list of graph releases is accessible via the <a href="https://index.commoncrawl.org/graphinfo.json" target="_blank" rel="noopener noreferrer nofollow">graphinfo.json</a> file.</p>
+<p>The top ten highest ranked hosts and domains from each release are listed below. Ranks are derived from <a href="https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality" target="_blank" rel="noopener noreferrer nofollow">Harmonic Centrality</a>, and we also show <a href="https://en.wikipedia.org/wiki/PageRank" target="_blank" rel="noopener noreferrer nofollow">PageRank</a> for comparison.</p>
         </div>
-<h2 id="Top-1000-Ranks">Top 1000 Ranks</h2><div class="dropdown"><div class="dropdown-label">Domain</div><div class="dropdown-controls"><select id="domain-release-dropdown">
-<option value="">Choose a release...</option><option value="domain-cc-main-2025-26-dec-jan-feb">cc-main-2025-26-dec-jan-feb</option>
-<option value="domain-cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
-<option value="domain-cc-main-2025-oct-nov-dec">cc-main-2025-oct-nov-dec</option>
-<option value="domain-cc-main-2025-sep-oct-nov">cc-main-2025-sep-oct-nov</option>
-<option value="domain-cc-main-2025-aug-sep-oct">cc-main-2025-aug-sep-oct</option>
-<option value="domain-cc-main-2025-jul-aug-sep">cc-main-2025-jul-aug-sep</option>
-<option value="domain-cc-main-2025-jun-jul-aug">cc-main-2025-jun-jul-aug</option>
-<option value="domain-cc-main-2025-may-jun-jul">cc-main-2025-may-jun-jul</option>
-<option value="domain-cc-main-2025-apr-may-jun">cc-main-2025-apr-may-jun</option>
-<option value="domain-cc-main-2025-mar-apr-may">cc-main-2025-mar-apr-may</option>
-<option value="domain-cc-main-2025-feb-mar-apr">cc-main-2025-feb-mar-apr</option>
-<option value="domain-cc-main-2025-jan-feb-mar">cc-main-2025-jan-feb-mar</option>
-<option value="domain-cc-main-2024-25-dec-jan-feb">cc-main-2024-25-dec-jan-feb</option>
-<option value="domain-cc-main-2024-25-nov-dec-jan">cc-main-2024-25-nov-dec-jan</option>
-<option value="domain-cc-main-2024-oct-nov-dec">cc-main-2024-oct-nov-dec</option>
-<option value="domain-cc-main-2024-sep-oct-nov">cc-main-2024-sep-oct-nov</option>
-<option value="domain-cc-main-2024-aug-sep-oct">cc-main-2024-aug-sep-oct</option>
-<option value="domain-cc-main-2024-jul-aug-sep">cc-main-2024-jul-aug-sep</option>
-<option value="domain-cc-main-2024-jun-jul-aug">cc-main-2024-jun-jul-aug</option>
-<option value="domain-cc-main-2024-may-jun-jul">cc-main-2024-may-jun-jul</option>
-<option value="domain-cc-main-2024-apr-may-jun">cc-main-2024-apr-may-jun</option>
-<option value="domain-cc-main-2024-feb-apr-may">cc-main-2024-feb-apr-may</option>
-<option value="domain-cc-main-2024-nov-feb-apr">cc-main-2024-nov-feb-apr</option>
-<option value="domain-cc-main-2023-24-sep-nov-feb">cc-main-2023-24-sep-nov-feb</option>
-<option value="domain-cc-main-2023-may-sep-nov">cc-main-2023-may-sep-nov</option>
-<option value="domain-cc-main-2023-mar-may-oct">cc-main-2023-mar-may-oct</option>
-<option value="domain-cc-main-2022-23-sep-nov-jan">cc-main-2022-23-sep-nov-jan</option>
-<option value="domain-cc-main-2022-may-jun-aug">cc-main-2022-may-jun-aug</option>
-<option value="domain-cc-main-2021-22-oct-nov-jan">cc-main-2021-22-oct-nov-jan</option>
-<option value="domain-cc-main-2021-jun-jul-sep">cc-main-2021-jun-jul-sep</option>
-<option value="domain-cc-main-2021-feb-apr-may">cc-main-2021-feb-apr-may</option>
-<option value="domain-cc-main-2020-21-oct-nov-jan">cc-main-2020-21-oct-nov-jan</option>
-<option value="domain-cc-main-2020-jul-aug-sep">cc-main-2020-jul-aug-sep</option>
-<option value="domain-cc-main-2020-feb-mar-may">cc-main-2020-feb-mar-may</option>
-<option value="domain-cc-main-2019-20-nov-dec-jan">cc-main-2019-20-nov-dec-jan</option>
-<option value="domain-cc-main-2019-aug-sep-oct">cc-main-2019-aug-sep-oct</option>
-<option value="domain-cc-main-2019-may-jun-jul">cc-main-2019-may-jun-jul</option>
-<option value="domain-cc-main-2019-feb-mar-apr">cc-main-2019-feb-mar-apr</option>
-<option value="domain-cc-main-2018-19-nov-dec-jan">cc-main-2018-19-nov-dec-jan</option>
-<option value="domain-cc-main-2018-aug-sep-oct">cc-main-2018-aug-sep-oct</option>
-<option value="domain-cc-main-2018-may-jun-jul">cc-main-2018-may-jun-jul</option>
-<option value="domain-cc-main-2018-feb-mar-apr">cc-main-2018-feb-mar-apr</option>
-<option value="domain-cc-main-2018-jan">cc-main-2018-jan</option>
-<option value="domain-cc-main-2017-18-nov-dec-jan">cc-main-2017-18-nov-dec-jan</option>
-<option value="domain-cc-main-2017-aug-sep-oct">cc-main-2017-aug-sep-oct</option>
-<option value="domain-cc-main-2017-may-jun-jul">cc-main-2017-may-jun-jul</option>
-<option value="domain-cc-main-2017-feb-mar-apr">cc-main-2017-feb-mar-apr</option>
-</select></div><div class="dropdown-content active" id="table-container-domain"><p class="placeholder-msg">Select a release to view ranks.</p></div></div>
-<div class="dropdown"><div class="dropdown-label">Host</div><div class="dropdown-controls"><select id="host-release-dropdown">
-<option value="">Choose a release...</option><option value="host-cc-main-2025-26-dec-jan-feb">cc-main-2025-26-dec-jan-feb</option>
-<option value="host-cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
-<option value="host-cc-main-2025-oct-nov-dec">cc-main-2025-oct-nov-dec</option>
-<option value="host-cc-main-2025-sep-oct-nov">cc-main-2025-sep-oct-nov</option>
-<option value="host-cc-main-2025-aug-sep-oct">cc-main-2025-aug-sep-oct</option>
-<option value="host-cc-main-2025-jul-aug-sep">cc-main-2025-jul-aug-sep</option>
-<option value="host-cc-main-2025-jun-jul-aug">cc-main-2025-jun-jul-aug</option>
-<option value="host-cc-main-2025-may-jun-jul">cc-main-2025-may-jun-jul</option>
-<option value="host-cc-main-2025-apr-may-jun">cc-main-2025-apr-may-jun</option>
-<option value="host-cc-main-2025-mar-apr-may">cc-main-2025-mar-apr-may</option>
-<option value="host-cc-main-2025-feb-mar-apr">cc-main-2025-feb-mar-apr</option>
-<option value="host-cc-main-2025-jan-feb-mar">cc-main-2025-jan-feb-mar</option>
-<option value="host-cc-main-2024-25-dec-jan-feb">cc-main-2024-25-dec-jan-feb</option>
-<option value="host-cc-main-2024-25-nov-dec-jan">cc-main-2024-25-nov-dec-jan</option>
-<option value="host-cc-main-2024-oct-nov-dec">cc-main-2024-oct-nov-dec</option>
-<option value="host-cc-main-2024-sep-oct-nov">cc-main-2024-sep-oct-nov</option>
-<option value="host-cc-main-2024-aug-sep-oct">cc-main-2024-aug-sep-oct</option>
-<option value="host-cc-main-2024-jul-aug-sep">cc-main-2024-jul-aug-sep</option>
-<option value="host-cc-main-2024-jun-jul-aug">cc-main-2024-jun-jul-aug</option>
-<option value="host-cc-main-2024-may-jun-jul">cc-main-2024-may-jun-jul</option>
-<option value="host-cc-main-2024-apr-may-jun">cc-main-2024-apr-may-jun</option>
-<option value="host-cc-main-2024-feb-apr-may">cc-main-2024-feb-apr-may</option>
-<option value="host-cc-main-2024-nov-feb-apr">cc-main-2024-nov-feb-apr</option>
-<option value="host-cc-main-2023-24-sep-nov-feb">cc-main-2023-24-sep-nov-feb</option>
-<option value="host-cc-main-2023-may-sep-nov">cc-main-2023-may-sep-nov</option>
-<option value="host-cc-main-2023-mar-may-oct">cc-main-2023-mar-may-oct</option>
-<option value="host-cc-main-2022-23-sep-nov-jan">cc-main-2022-23-sep-nov-jan</option>
-<option value="host-cc-main-2022-may-jun-aug">cc-main-2022-may-jun-aug</option>
-<option value="host-cc-main-2021-22-oct-nov-jan">cc-main-2021-22-oct-nov-jan</option>
-<option value="host-cc-main-2021-jun-jul-sep">cc-main-2021-jun-jul-sep</option>
-<option value="host-cc-main-2021-feb-apr-may">cc-main-2021-feb-apr-may</option>
-<option value="host-cc-main-2020-21-oct-nov-jan">cc-main-2020-21-oct-nov-jan</option>
-<option value="host-cc-main-2020-jul-aug-sep">cc-main-2020-jul-aug-sep</option>
-<option value="host-cc-main-2020-feb-mar-may">cc-main-2020-feb-mar-may</option>
-<option value="host-cc-main-2019-20-nov-dec-jan">cc-main-2019-20-nov-dec-jan</option>
-<option value="host-cc-main-2019-aug-sep-oct">cc-main-2019-aug-sep-oct</option>
-<option value="host-cc-main-2019-may-jun-jul">cc-main-2019-may-jun-jul</option>
-<option value="host-cc-main-2019-feb-mar-apr">cc-main-2019-feb-mar-apr</option>
-<option value="host-cc-main-2018-19-nov-dec-jan">cc-main-2018-19-nov-dec-jan</option>
-<option value="host-cc-main-2018-aug-sep-oct">cc-main-2018-aug-sep-oct</option>
-<option value="host-cc-main-2018-may-jun-jul">cc-main-2018-may-jun-jul</option>
-<option value="host-cc-main-2018-feb-mar-apr">cc-main-2018-feb-mar-apr</option>
-<option value="host-cc-main-2018-jan">cc-main-2018-jan</option>
-<option value="host-cc-main-2017-18-nov-dec-jan">cc-main-2017-18-nov-dec-jan</option>
-<option value="host-cc-main-2017-aug-sep-oct">cc-main-2017-aug-sep-oct</option>
-<option value="host-cc-main-2017-may-jun-jul">cc-main-2017-may-jun-jul</option>
-<option value="host-cc-main-2017-feb-mar-apr">cc-main-2017-feb-mar-apr</option>
-</select></div><div class="dropdown-content active" id="table-container-host"><p class="placeholder-msg">Select a release to view ranks.</p></div></div>
-<p>These ranks can be found by running the following:</p><pre><code class="bash"># Define environment variables for release and graph level
-export RELEASE="{release}"  # Desired release (e.g., cc-main-2017-18-nov-dec-jan)
-export GRAPH_LEVEL="{graph_level}"  # Desired graph level (e.g., domain or host)
-
-# Fetch the top 1000 ranks for the specified release and graph level
-curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
-        $GRAPH_LEVEL/$RELEASE-$GRAPH_LEVEL-ranks.txt.gz \
-        | zcat \
-        | head -n 1001
-</code></pre><br><p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>
-<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>
-<p><a href='https://en.wikipedia.org/wiki/Centrality' target='_blank'>Harmonic Centrality</a> (that's the equation below and on the <i>left</i>) considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank'>HyperBall</a>.</p>
-<div class="latex">
-  <img src="img/harmcen.svg" alt="Harmonic Centrality equation">
-  <img src="img/pagerank.svg" alt="PageRank equation">
+<h2 id="Top-1000-Ranks"><a href="#Top-1000-Ranks">Top 1000 Ranks</a></h2>
+<div class="rank-tabbed">
+    <div class="rank-tabs" role="tablist" data-active="0">
+        <button class="rank-tab active" role="tab" aria-selected="true"
+                data-tab="domain" id="tab-domain" aria-controls="panel-domain">Domain</button>
+        <button class="rank-tab" role="tab" aria-selected="false"
+                data-tab="host" id="tab-host" aria-controls="panel-host">Host</button>
+    </div>
+    <div class="rank-body">
+        <div class="rank-controls">
+            <select id="rank-release-dropdown">
+                <option value="">Choose a release...</option>
+                <option value="cc-main-2025-26-dec-jan-feb">cc-main-2025-26-dec-jan-feb</option>
+                <option value="cc-main-2025-26-nov-dec-jan">cc-main-2025-26-nov-dec-jan</option>
+                <option value="cc-main-2025-oct-nov-dec">cc-main-2025-oct-nov-dec</option>
+                <option value="cc-main-2025-sep-oct-nov">cc-main-2025-sep-oct-nov</option>
+                <option value="cc-main-2025-aug-sep-oct">cc-main-2025-aug-sep-oct</option>
+                <option value="cc-main-2025-jul-aug-sep">cc-main-2025-jul-aug-sep</option>
+                <option value="cc-main-2025-jun-jul-aug">cc-main-2025-jun-jul-aug</option>
+                <option value="cc-main-2025-may-jun-jul">cc-main-2025-may-jun-jul</option>
+                <option value="cc-main-2025-apr-may-jun">cc-main-2025-apr-may-jun</option>
+                <option value="cc-main-2025-mar-apr-may">cc-main-2025-mar-apr-may</option>
+                <option value="cc-main-2025-feb-mar-apr">cc-main-2025-feb-mar-apr</option>
+                <option value="cc-main-2025-jan-feb-mar">cc-main-2025-jan-feb-mar</option>
+                <option value="cc-main-2024-25-dec-jan-feb">cc-main-2024-25-dec-jan-feb</option>
+                <option value="cc-main-2024-25-nov-dec-jan">cc-main-2024-25-nov-dec-jan</option>
+                <option value="cc-main-2024-oct-nov-dec">cc-main-2024-oct-nov-dec</option>
+                <option value="cc-main-2024-sep-oct-nov">cc-main-2024-sep-oct-nov</option>
+                <option value="cc-main-2024-aug-sep-oct">cc-main-2024-aug-sep-oct</option>
+                <option value="cc-main-2024-jul-aug-sep">cc-main-2024-jul-aug-sep</option>
+                <option value="cc-main-2024-jun-jul-aug">cc-main-2024-jun-jul-aug</option>
+                <option value="cc-main-2024-may-jun-jul">cc-main-2024-may-jun-jul</option>
+                <option value="cc-main-2024-apr-may-jun">cc-main-2024-apr-may-jun</option>
+                <option value="cc-main-2024-feb-apr-may">cc-main-2024-feb-apr-may</option>
+                <option value="cc-main-2024-nov-feb-apr">cc-main-2024-nov-feb-apr</option>
+                <option value="cc-main-2023-24-sep-nov-feb">cc-main-2023-24-sep-nov-feb</option>
+                <option value="cc-main-2023-may-sep-nov">cc-main-2023-may-sep-nov</option>
+                <option value="cc-main-2023-mar-may-oct">cc-main-2023-mar-may-oct</option>
+                <option value="cc-main-2022-23-sep-nov-jan">cc-main-2022-23-sep-nov-jan</option>
+                <option value="cc-main-2022-may-jun-aug">cc-main-2022-may-jun-aug</option>
+                <option value="cc-main-2021-22-oct-nov-jan">cc-main-2021-22-oct-nov-jan</option>
+                <option value="cc-main-2021-jun-jul-sep">cc-main-2021-jun-jul-sep</option>
+                <option value="cc-main-2021-feb-apr-may">cc-main-2021-feb-apr-may</option>
+                <option value="cc-main-2020-21-oct-nov-jan">cc-main-2020-21-oct-nov-jan</option>
+                <option value="cc-main-2020-jul-aug-sep">cc-main-2020-jul-aug-sep</option>
+                <option value="cc-main-2020-feb-mar-may">cc-main-2020-feb-mar-may</option>
+                <option value="cc-main-2019-20-nov-dec-jan">cc-main-2019-20-nov-dec-jan</option>
+                <option value="cc-main-2019-aug-sep-oct">cc-main-2019-aug-sep-oct</option>
+                <option value="cc-main-2019-may-jun-jul">cc-main-2019-may-jun-jul</option>
+                <option value="cc-main-2019-feb-mar-apr">cc-main-2019-feb-mar-apr</option>
+                <option value="cc-main-2018-19-nov-dec-jan">cc-main-2018-19-nov-dec-jan</option>
+                <option value="cc-main-2018-aug-sep-oct">cc-main-2018-aug-sep-oct</option>
+                <option value="cc-main-2018-may-jun-jul">cc-main-2018-may-jun-jul</option>
+                <option value="cc-main-2018-feb-mar-apr">cc-main-2018-feb-mar-apr</option>
+                <option value="cc-main-2018-jan">cc-main-2018-jan</option>
+                <option value="cc-main-2017-18-nov-dec-jan">cc-main-2017-18-nov-dec-jan</option>
+                <option value="cc-main-2017-aug-sep-oct">cc-main-2017-aug-sep-oct</option>
+                <option value="cc-main-2017-may-jun-jul">cc-main-2017-may-jun-jul</option>
+                <option value="cc-main-2017-feb-mar-apr">cc-main-2017-feb-mar-apr</option>
+            </select>
+            <div class="search-container" id="rank-search-container">
+                <div class="search-input-wrap">
+                    <input type="text" class="search-input" id="rank-search-input" placeholder="Filter domains (e.g. youtube|vimeo)" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" disabled>
+                    <button type="button" class="search-clear" id="rank-search-clear" aria-label="Clear search">&times;</button>
+                </div>
+                <span class="search-count" id="rank-search-count"></span>
+            </div>
+            <label class="surt-toggle" id="surt-toggle" title="SURT (Sort-friendly URI Rewriting Transform) shows domains in reversed notation, e.g. com.google instead of google.com">
+                <input type="checkbox" id="surt-checkbox"><span class="surt-slider"><span class="surt-label">SURT</span></span>
+            </label>
+        </div>
+        <div class="rank-content" id="rank-content">
+            <div class="rank-content-inner">
+                <div class="rank-panel active" role="tabpanel" id="panel-domain" aria-labelledby="tab-domain">
+                    <div id="table-container-domain"></div>
+                </div>
+                <div class="rank-panel" role="tabpanel" id="panel-host" aria-labelledby="tab-host" hidden>
+                    <div id="table-container-host"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<br><p>With <a href ='https://en.wikipedia.org/wiki/PageRank' target='_blank'>PageRank</a> (that's the equation on the <i>right</i>), each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank'>PageRankParallelGaussSeidel</a>.</p>
+<p>These ranks can be found by running the following:</p><pre><code class="bash">INDEX_URL="https://index.commoncrawl.org/graphinfo.json"
+DATA_BASE_URL="https://data.commoncrawl.org/projects/hyperlinkgraph"
+
+GRAPH_LEVEL="domain"  # "domain" or "host"
+RESULTS=1000  # how many results to retrieve
+
+GRAPH_RELEASE="$(curl -fsSL "$INDEX_URL" | jq -r '.[0].id')"
+# ... or a specific release e.g. "cc-main-2025-26-dec-jan-feb"
+
+curl -fsSL \
+  "$DATA_BASE_URL/$GRAPH_RELEASE/$GRAPH_LEVEL/$GRAPH_RELEASE-$GRAPH_LEVEL-ranks.txt.gz" \
+  2>/dev/null | gzip -dc | head -n "$((RESULTS + 1))"
+</code></pre><p style="background: #e9eff6; border-radius: 6px; padding: 10px 14px; margin: 6px 0 12px; font-size: 0.93em; color: #3a5068;">
+These rank files are multiple GiB each, so we pipe to <code>zcat</code> or <code>gunzip</code> and use <code>head</code> to peek at the first few lines without downloading the whole file.<br><strong>Note:</strong> <code>head</code> can stop the stream early, but <code>tail</code> on a gzipped stream generally cannot.
+</p><br>
+<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>
+<p><a href='https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality' target='_blank' rel='noopener noreferrer nofollow'>Harmonic Centrality</a> considers how close a node is to others, directly or indirectly. The closer a node is to others, the higher its score. It's based on proximity, not the importance or behaviour of neighbours. We calculate this with <a href='https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/algo/HyperBall.html' target='_blank' rel='noopener noreferrer nofollow'>HyperBall</a>. For more details, see the paper <a href='https://arxiv.org/abs/1308.2140' target='_blank' rel='noopener noreferrer nofollow'>Axioms for Centrality</a> by Boldi and Vigna (2013) and the talk <a href='https://www.youtube.com/watch?v=cnGJtGP4gL4' target='_blank' rel='noopener noreferrer nofollow'>A modern view of centrality measures</a>.</p>
+<div class="eq-grid">
+  <div class="eq-card">
+    <div class="eq-header">
+      <span class="eq-name">Harmonic Centrality</span>
+    </div>
+    <div class="eq-body">
+      <img src="img/harmcen.svg" alt="Harmonic Centrality: H(v) = sum of 1/d(v,u) for all u not equal to v">
+    </div>
+    <div class="eq-footer">
+      <span class="eq-source">H(v) = &sum;<sub>u&ne;v</sub> 1 / d(v, u)</span>
+    </div>
+  </div>
+  <div class="eq-card">
+    <div class="eq-header">
+      <span class="eq-name">PageRank</span>
+    </div>
+    <div class="eq-body">
+      <img src="img/pagerank.svg" alt="PageRank: PR(v) = sum of PR(u)/L(u) for all u in backlinks of v">
+    </div>
+    <div class="eq-footer">
+      <span class="eq-source">PR(v) = &sum;<sub>u&isin;B<sub>v</sub></sub> PR(u) / L(u)</span>
+    </div>
+  </div>
+</div>
+<br><p>With <a href='https://en.wikipedia.org/wiki/PageRank' target='_blank' rel='noopener noreferrer nofollow'>PageRank</a>, each node's score depends on how many important nodes link to it, and how those nodes distribute their importance.  We calculate this with <a href='https://law.di.unimi.it/software/law-docs/it/unimi/dsi/law/rank/PageRankParallelGaussSeidel.html' target='_blank' rel='noopener noreferrer nofollow'>PageRankParallelGaussSeidel</a>.</p>
 <p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>
+<h2 id="Domain-Lookup"><a href="#Domain-Lookup">Domain Lookup</a></h2>
+
+<div class="domain-lookup" id="domain-lookup-box">
+    <div class="embed-bar">
+        <span class="embed-attribution">Domain rankings from the <a href="https://commoncrawl.github.io/cc-webgraph-statistics/" target="_blank" rel="noopener noreferrer">Common Crawl Web Graph</a> &middot;</span>
+        <span class="embed-bar-updated">Updated 2026-03-06</span>
+        <details class="embed-help">
+            <summary title="Embed this on your site"><i class="fas fa-code"></i></summary>
+            <div class="embed-help-content">
+                <p>Embed this widget on your own site with an <code>iframe</code>. It resizes automatically to fit the content:</p>
+<pre><code>&lt;iframe id="cc-domain-lookup"
+  src="https://commoncrawl.github.io/cc-webgraph-statistics/?embed=domain-lookup&amp;domain=example.com"
+  width="100%" height="300" frameborder="0"
+  style="border:1px solid #e2e8f0;border-radius:8px;"&gt;
+&lt;/iframe&gt;
+&lt;script&gt;
+window.addEventListener('message', function(e) {
+  if (e.data &amp;&amp; e.data.ccEmbed === 'domain-lookup') {
+    document.getElementById('cc-domain-lookup').style.height = e.data.height + 'px';
+  }
+});
+&lt;/script&gt;</code></pre>
+                <p>To compare two domains, add <code>&amp;compare=other.com</code> to the URL.</p>
+            </div>
+        </details>
+    </div>
+    <p>Search for a domain to see its Harmonic Centrality and PageRank over time. Enter a second domain to compare them side by side. Only domains that appear in the top 1,000 for at least one release are available.</p>
+    <div class="domain-search-row">
+        <div class="search-input-wrap">
+            <input type="text" id="domain-search-input" class="domain-search-input"
+                   placeholder="Primary domain (e.g. wikipedia.org)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button type="button" class="search-clear domain-clear" aria-label="Clear search">&times;</button>
+        </div>
+        <div class="search-input-wrap">
+            <input type="text" id="domain-search-input-2" class="domain-search-input"
+                   placeholder="Secondary domain (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button type="button" class="search-clear domain-clear" aria-label="Clear search">&times;</button>
+        </div>
+        <button type="button" id="domain-search-btn" class="domain-search-btn">
+            <i class="fas fa-search"></i> Look up
+        </button>
+    </div>
+    <div id="domain-search-msg" class="domain-search-msg"></div>
+    <div id="domain-chart-wrap" class="domain-chart-wrap" style="display:none;">
+        <div class="chart-wrapper">
+            <canvas id="chart-domain-lookup"></canvas>
+        </div>
+        <div class="chart-range-slider" id="slider-domain-lookup"></div>
+    </div>
+</div>
 <h2 id="Statistics-Plots">Statistics Plots</h2>
-<div class="toc">
-<ul>
+<div class="toc open" id="stats-toc">
+<div class="toc-header" onclick="document.getElementById('stats-toc').classList.toggle('open')"><span>Jump to chart</span><span class="toc-toggle"><i class="fas fa-chevron-down"></i></span></div>
+<div class="toc-body"><ul>
 <li><a href="#nodes">nodes</a></li>
 <li><a href="#arcs">arcs</a></li>
 <li><a href="#successoravggap">successoravggap</a></li>
@@ -1042,29 +284,28 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
 <li><a href="#maxoutdegree">maxoutdegree</a></li>
 <li><a href="#dangling">dangling</a></li>
 <li><a href="#percdangling">percdangling</a></li>
-<li><a href="#avgoutdegree">avgoutdegree</a></li>
+<li><a href="#avgdegree">avgdegree</a></li>
 <li><a href="#successoravglogdelta">successoravglogdelta</a></li>
 <li><a href="#maxindegree">maxindegree</a></li>
-<li><a href="#avgindegree">avgindegree</a></li>
 <li><a href="#sccs">sccs</a></li>
 <li><a href="#maxsccsize">maxsccsize</a></li>
 <li><a href="#percmaxscc">percmaxscc</a></li>
 <li><a href="#percminscc">percminscc</a></li>
 </ul>
-</div>
-<p>The following plots are of Web Graph <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html" target="_blank">statistics</a> for all previous releases.</p>
-<div class="download"><h2>Download Data</h2>
-<a href="domain.tsv" download class="download-button"><i class="fas fa-download"></i>domain.tsv</a>
-<a href="host.tsv" download class="download-button"><i class="fas fa-download"></i>host.tsv</a>
-</div>
+</div></div>
+<p>The following charts are interactive Web Graph <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html" target="_blank" rel="noopener noreferrer nofollow">statistics</a> for all previous releases. Hover for values, click legend items to toggle series, and drag the range bar to zoom.</p>
+<script>
+window.CHART_DATA = {"nodes":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,91034128.0,93111025.0,94681319.0,70367284.0,97912758.0,92055751.0,87160632.0,90031628.0,90757643.0,88258311.0,92747835.0,85840531.0,90983688.0,88591818.0,85908635.0,87749728.0,87870767.0,90296538.0,91068127.0,88092985.0,94197637.0,93942613.0,101323206.0,113858457.0,127746477.0,173391896.0,163003160.0,159674761.0,95369395.0,96021021.0,98031234.0,98727688.0,100765998.0,106478170.0,135153877.0,157123147.0,156144386.0,161816883.0,209497416.0,207560453.0,184587023.0,97717162.0,100662487.0,121304598.0,122294847.0,134222466.0],"host":[387806511.0,1306661614.0,5111322247.0,2757362559.0,774883670.0,2140026222.0,886429102.0,903328680.0,407339456.0,492237574.0,445396777.0,820304244.0,1236811949.0,927132915.0,538570861.0,490193249.0,514570179.0,765504147.0,384849412.0,449151318.0,324703686.0,378733557.0,319124148.0,348360632.0,335267082.0,336594926.0,371683498.0,362168422.0,361648446.0,306548416.0,299918956.0,298244156.0,283704061.0,277728321.0,267363720.0,293276643.0,309173088.0,326803320.0,371605733.0,481648822.0,691059743.0,628657326.0,468402348.0,235658112.0,250753325.0,279356058.0,288604261.0]},"arcs":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,1071173924.0,1257608653.0,1444523227.0,834822126.0,1503959484.0,1454899093.0,1483801676.0,1687116334.0,1888693874.0,1909511585.0,2391376916.0,1936538896.0,1960551499.0,1710562230.0,1474317705.0,1579621239.0,1558152694.0,1550852749.0,1575016171.0,1686970894.0,1691579554.0,1625079303.0,1817702478.0,1874394483.0,1817949924.0,1884295856.0,1817200335.0,1761783181.0,1673843124.0,1679689064.0,1763636882.0,1753180580.0,1914696705.0,1940380995.0,2037859503.0,2082046433.0,2140217715.0,2227023429.0,2552643505.0,3902327394.0,5398934716.0,5994217181.0,6553819804.0,6220780848.0,6112336768.0,5380423856.0],"host":[2504610000.0,5268397861.0,18809472926.0,8631281824.0,2715509033.0,10154132012.0,5397084512.0,5262147994.0,4226572657.0,3036667554.0,3140069461.0,4554269575.0,4539340950.0,3884600740.0,3021307494.0,2575254142.0,2816716559.0,4947819344.0,2472924097.0,2693286778.0,2630857060.0,2609508328.0,2404066457.0,2664958823.0,2701550796.0,2601584631.0,2717872917.0,2749439859.0,2715890154.0,2647414185.0,2627429657.0,2713346784.0,2611176567.0,2733552137.0,2701899760.0,2801432574.0,2858348893.0,2941436766.0,3052862379.0,3355655920.0,4952015000.0,6854958934.0,7969920649.0,9479060701.0,10858559096.0,13431887360.0,12365071120.0]},"successoravggap":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,2936997.109,2630667.832,2537216.144,2382485.903,2735816.597,2520402.841,2310842.883,2316881.246,2322489.514,2149878.501,1915890.055,2136707.485,2352469.726,2545785.234,2828724.7,2809763.686,2914516.758,3030301.903,3092669.504,2604790.106,2838514.37,3110018.592,3118427.022,3514935.426,4131837.404,5375766.569,5189529.652,5206050.515,3083828.851,3004648.554,2912068.141,2921340.2,2744992.733,2913422.696,3413745.038,3800050.99,3597455.233,3587769.421,3798887.568,2430653.854,1550810.683,818203.449,758324.501,949991.927,950990.246,1205528.943],"host":[8710382.197,15795019.905,29519071.898,28392337.583,14589542.957,23603702.818,14441417.567,12665648.231,7436068.305,8017813.238,8366637.516,10643998.065,12851283.263,16440386.048,10541600.463,11146419.121,10268711.228,11034221.21,10590406.024,11319570.359,8201292.797,9429752.388,9012084.671,8979894.695,8583944.786,9029426.943,9746599.367,9573867.777,9430343.436,7987060.069,7603808.326,7350452.39,7203534.751,6836336.612,6617223.369,6876745.23,6962259.59,6868402.942,7225940.578,7815168.886,5913903.347,3816638.094,2376696.811,1492333.708,1380786.085,1280558.195,1452045.298]},"avglocality":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,23123042.546,22755077.358,22478748.433,16493621.139,23981223.511,22976723.843,21244772.485,23888850.602,23239212.183,23085199.237,27409006.532,21918275.17,23395071.007,21600009.183,22414550.027,21729260.284,22291864.97,23683930.068,24035649.014,22750448.279,24590171.834,24546759.915,26804614.532,30559387.518,35089347.591,47254562.222,43587775.004,42305217.012,24141942.656,24080226.466,24068479.169,23619251.027,23830566.539,25491851.49,31727437.321,37054652.905,36931022.701,38663364.736,44658205.899,32893437.016,23330225.937,11720625.846,12192605.485,16192447.143,16112143.301,17875523.858],"host":[71434066.048,185037729.794,313469953.846,362099437.291,121250338.401,254566987.448,120929887.706,103180618.891,65884984.015,78258158.963,85654632.523,154082503.619,154409700.755,158306762.41,91085732.019,89789188.144,85538461.743,106308381.983,88873037.602,95379943.501,74823702.77,89646599.558,77652353.698,85708764.397,78654123.927,78880161.054,88741754.255,87542588.81,86115265.501,70551853.402,67171953.636,65873038.36,62832072.617,62970140.081,61196796.302,66825544.94,71739451.918,74758826.888,81649991.446,95430458.79,99102560.264,79073938.462,49975887.96,32534049.545,38136621.178,41552673.079,41145393.861]},"maxoutdegree":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,14903607.0,15584230.0,15278761.0,10270731.0,15168333.0,16085169.0,10277291.0,10728569.0,8313007.0,7813499.0,7352670.0,6459351.0,6118113.0,6561851.0,4774109.0,5845970.0,5829841.0,5971029.0,5594073.0,5406175.0,5376593.0,5133896.0,8947770.0,26598506.0,43165041.0,106353649.0,88980198.0,87485221.0,5614034.0,5614034.0,5613426.0,5093944.0,6160204.0,6397298.0,10968122.0,11887203.0,11887203.0,20451317.0,40544857.0,40544857.0,20093942.0,4787599.0,4648139.0,26365247.0,26365247.0,26365247.0],"host":[6365878.0,15090917.0,65903624.0,458002862.0,180621981.0,458002862.0,9775588.0,26059407.0,3620431.0,3096222.0,5905747.0,5433577.0,1604186.0,1547753.0,57364265.0,2033605.0,7440499.0,6588192.0,7778640.0,4936642.0,5486222.0,6025628.0,5530205.0,8882010.0,17682037.0,17682037.0,71253399.0,71253399.0,71253399.0,6251977.0,6251977.0,6251977.0,4874067.0,7322747.0,7608315.0,11103477.0,11920266.0,11920266.0,20476524.0,40637324.0,40637324.0,20160857.0,10257004.0,5475171.0,26535365.0,26535365.0,26535365.0]},"dangling":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,50749874.0,55766721.0,56232555.0,42131278.0,56249923.0,52903093.0,48783801.0,47546948.0,46373014.0,46144841.0,48252731.0,43637763.0,46319868.0,44641614.0,42843820.0,43780106.0,43245039.0,45421788.0,45511601.0,45839150.0,50514815.0,47688178.0,54208574.0,65319246.0,78752934.0,123060745.0,113073461.0,110626345.0,47804375.0,49972324.0,52101196.0,52924585.0,54709869.0,60539913.0,88705097.0,110141020.0,109633188.0,115712095.0,163210711.0,161366881.0,138440325.0,51879415.0,54608925.0,74996682.0,76588166.0,87573073.0],"host":[322944466.0,1224433322.0,5007415468.0,2665160616.0,718649119.0,2019035591.0,793239284.0,819336283.0,322587029.0,426805790.0,381754344.0,752099917.0,1173648009.0,857361419.0,466848789.0,413872637.0,452077824.0,701377888.0,325533398.0,388891963.0,268370331.0,321355151.0,259552619.0,286974795.0,271519221.0,270551110.0,302155805.0,292612345.0,293841465.0,242377012.0,238246093.0,237799379.0,223888343.0,217638116.0,207731825.0,233185357.0,249023188.0,267364453.0,312536421.0,422621831.0,632390916.0,570170988.0,410427500.0,177519802.0,191572901.0,211205918.0,219337307.0]},"percdangling":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,55.74818490050237,59.89271517524375,59.39139377642172,59.8733894575212,57.449023139558584,57.46853664797108,55.96999457277914,52.81138312860454,51.09543666752121,52.283847806695505,52.02572221766686,50.83584932623494,50.91007961778819,50.390222266349696,49.87137788884668,49.89201334048579,49.214363862329776,50.30291194552775,49.97533439992677,52.03496055900478,53.626414216738794,50.7630951248929,53.5006501866907,57.36881363147228,61.647832370359616,70.97260474041994,69.36887665245263,69.28229878484052,50.12548837077136,52.043108352284655,53.147546831859735,53.606628568066945,54.29397821276975,56.85664300954834,65.63266919823543,70.09853233145846,70.21269916165926,71.50804839072323,77.90583488628805,77.744521496106,75.00003128605633,53.09140578601741,54.249528923321755,61.82509421448312,62.62583246864032,65.24472065652556],"host":[83.27463743897792,93.70699413536153,97.96712525685528,96.656154530747,92.74283958003656,94.34630147256205,89.4870534158072,90.70190077436708,79.19366126909149,86.70727562134458,85.71107015442098,91.68548407510129,94.89300373827484,92.4744882992316,86.68289036899826,84.43050528425373,87.8554262274884,91.62300305605008,84.5872145960301,86.58372967303639,82.65084215890299,84.84992815146823,81.3328043730492,82.37865264867243,80.9859468994931,80.37884385696296,81.29384452790529,80.79454950382173,81.25058140025853,79.06647020482403,79.43682392652767,79.73312275060974,78.916157284051,78.36367397331438,77.69634002698646,79.5103744419224,80.54491081707603,81.81203697685812,84.10430551672894,87.7448073567592,91.51031041899368,90.69662667066414,87.62285282139534,75.32938310224603,76.39894745164396,75.60455982665677,75.99933079297121]},"avgdegree":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,11.766729110647384,13.50654933720255,15.256686770491651,11.863782123522062,15.3601993725884,15.804543194699482,17.023759947036638,18.739151690114944,20.810301056407997,21.635487506666653,25.783641375564184,22.559726430396847,21.548384574166747,19.308354525470964,17.16146118489719,18.00143744035309,17.732321535329262,17.17510752184098,17.294922195995092,19.149889108650367,17.95777057549756,17.2986385102999,17.939646303730264,16.46249679108158,14.230920231170057,10.867265999559748,11.14825218725821,11.033573308432883,17.55115594473468,17.492930678168896,17.990560865529858,17.75773965252787,19.001416579032934,18.22327520279509,15.078069147805504,13.25104844673204,13.706658111934937,13.762614800830146,12.184606157624398,18.80091962412512,29.248723058933564,61.342522217335784,65.10687346717353,51.2823169984043,49.980329653628,40.08586651954376],"host":[6.4584011071438665,4.031952729423335,3.67996225184978,3.1302672895980233,3.504408646268155,4.744863360837828,6.088568730226549,5.825286089665613,10.3760453222582,6.169109621851013,7.050049805367137,5.551927359039727,3.670194934379632,4.18990705340237,5.609860675325322,5.253548773373661,5.473921097553537,6.463478171072533,6.425692803189212,5.996390681859248,8.10233198276659,6.890090090432626,7.53332667573624,7.649999966127057,8.057906490205323,7.729126109880813,7.312331409989044,7.591605706032538,7.509752036927043,8.636202462060675,8.760465467211082,9.097736634276249,9.203874480316305,9.842540102346998,10.10570828383148,9.552184399492052,9.245141326789737,9.000633059664143,8.215326373880243,6.9670178078417475,7.165827629464447,10.904126382518289,17.01511677520455,40.223782752702355,43.30374919654605,48.08160401518839,42.84438170509201]},"successoravglogdelta":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,11.517,11.473,11.449,11.21,11.529,11.513,11.426,11.57,11.522,11.445,11.588,11.484,11.484,11.42,11.492,11.476,11.522,11.63,11.64,11.604,11.697,11.651,11.69,11.757,11.847,12.065,12.0,11.96,11.56,11.536,11.514,11.463,11.461,11.498,11.714,11.854,11.871,11.849,11.97,11.615,11.379,10.578,10.64,11.104,11.104,11.129],"host":[11.034,11.604,10.912,11.789,11.08,11.455,10.722,10.437,10.555,11.828,11.729,11.837,11.131,11.324,11.505,11.199,11.329,10.396,11.725,11.734,11.747,11.945,11.883,11.899,11.764,11.767,11.92,11.931,11.877,11.66,11.575,11.553,11.572,11.685,11.735,11.834,11.936,12.018,12.111,12.296,12.501,12.455,12.129,11.729,11.902,11.967,11.916]},"maxindegree":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,12896169.0,13708333.0,14486716.0,10947790.0,15723425.0,14710394.0,14587138.0,16239820.0,20348771.0,20081619.0,21025640.0,20657727.0,21931935.0,21960679.0,20725634.0,21157754.0,21872117.0,21823602.0,21520475.0,19289683.0,18735526.0,19814903.0,20064551.0,20266455.0,20123818.0,20561170.0,20665985.0,20526625.0,19902538.0,19262862.0,19357386.0,19548353.0,19804810.0,19763669.0,19891106.0,19871687.0,19296180.0,18764872.0,18644992.0,18328481.0,18349974.0,18463744.0,18379140.0,18333638.0,17770230.0,17749917.0],"host":[18503641.0,23055296.0,25199215.0,24959586.0,16919054.0,26710468.0,25321401.0,25537480.0,27471573.0,21798712.0,21178041.0,21199733.0,20954040.0,22434038.0,22816100.0,21922167.0,22664786.0,23015178.0,22650832.0,22738744.0,21233480.0,21457593.0,22421969.0,22366131.0,22432206.0,22074370.0,22228250.0,22315777.0,22293654.0,22107859.0,21694252.0,21770679.0,21601856.0,21694689.0,21493180.0,21584570.0,21470968.0,21242128.0,20909245.0,20695754.0,20411635.0,20379674.0,20502390.0,20400971.0,20349026.0,19824366.0,19804348.0]},"sccs":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,null,null,61828473.0,48340957.0,60841526.0,58003473.0,53623437.0,52643327.0,52403057.0,52864499.0,55660821.0,51857175.0,54940222.0,53492666.0,51903368.0,52486499.0,52279751.0,54096544.0,53818955.0,53825092.0,58317919.0,56137055.0,61663064.0,72809566.0,85887318.0,129415183.0,122198511.0,119676389.0,60605672.0,62100048.0,63890079.0,65134401.0,66282890.0,71583700.0,98921479.0,120210817.0,120282353.0,126731857.0,173585840.0,172068179.0,150954013.0,65746681.0,68343507.0,88342309.0,89743649.0,100855498.0],"host":[341726590.0,1246649818.0,null,2691358522.0,737181553.0,2061198764.0,817803284.0,841855392.0,343657469.0,439825367.0,396866726.0,769364470.0,1191209460.0,878497805.0,490647678.0,446400514.0,468698715.0,717613769.0,339051860.0,402142596.0,280994530.0,333983086.0,273078882.0,299727663.0,284874651.0,284464329.0,317219111.0,312080726.0,313422023.0,263709475.0,258220581.0,256436541.0,242979591.0,236139828.0,225915651.0,250609846.0,266294624.0,284727838.0,330584446.0,439929733.0,649999950.0,589499964.0,430758634.0,197614581.0,212105933.0,239474206.0,247244739.0]},"maxsccsize":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,null,null,32786601.0,21938381.0,37000210.0,33994048.0,33482212.0,37319729.0,38282727.0,35295733.0,36914606.0,33840025.0,35872998.0,34798717.0,33830007.0,35104684.0,35426413.0,36051781.0,37105230.0,34130315.0,35747807.0,37657593.0,39532630.0,40940059.0,41759289.0,43912406.0,40707883.0,39895198.0,34555583.0,33723117.0,33949188.0,33402615.0,34303081.0,34736549.0,36097302.0,36786112.0,35725798.0,34946553.0,35792164.0,35367716.0,33478089.0,31749132.0,32101754.0,32768086.0,32363037.0,33193957.0],"host":[45497015.0,59368339.0,null,64660818.0,36641624.0,77531553.0,67432452.0,60176489.0,62618983.0,51916704.0,47870945.0,49989278.0,44695092.0,47481436.0,45669713.0,42595563.0,45186670.0,47041576.0,45194279.0,46377180.0,43146906.0,44209975.0,45507399.0,48138706.0,49844735.0,51597527.0,54008765.0,49601598.0,47710285.0,42001906.0,40831450.0,40940186.0,39881160.0,40812883.0,40735500.0,41986319.0,42281752.0,41497341.0,40418193.0,41176070.0,40496035.0,38546052.0,36941795.0,37340968.0,37980437.0,38896792.0,40405293.0]},"percmaxscc":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,null,null,34.62837373442168,31.17696144134254,37.78895698147937,36.927674404611615,38.41437496690019,41.45179847242127,42.18127061761619,39.99139865706245,39.80104333432688,39.42196606402633,39.42794449044536,39.27983168829429,39.3790531068268,40.005461897272205,40.31649456297565,39.92598365177633,40.74447473812655,38.74351062119192,37.94979167046409,40.08574149411833,39.016363141924266,35.956976827817016,32.689190324990335,25.325523864160296,24.973677197423655,24.98528743687927,36.23340905119509,35.12055657062842,34.63099117981112,33.83307730248884,34.04231752857745,32.62316491727835,26.708299311310174,23.41228055978283,22.879975973007443,21.59635777930539,17.084775880958837,17.039718062284244,18.13675114095101,32.49084536450209,31.890483691307963,27.01306178023029,26.463123994096005,24.73055218639777],"host":[11.731885285443289,4.543512900655242,null,2.345024153205672,4.728661271181518,3.622925373668622,7.607201957590964,6.661638264380136,15.372678015262045,10.54708269791692,10.747932511420036,6.09399236510594,3.613733844998614,5.121319201573164,8.47979649608262,8.689545008401371,8.781439703290696,6.145175853632574,11.743367039365516,10.32551350545074,13.288086295392407,11.673107434734124,14.26009259568787,13.818641252206708,14.86717237572402,15.32926464851107,14.530848232600308,13.695726901336528,13.192448502875637,13.701557016037558,13.614161153588435,13.7270706487875,14.057310233567646,14.695254287732508,15.23598639336706,14.31628464186969,13.675754339912018,12.69795576128174,10.876633326859896,8.54898177244997,5.859990458162168,6.131488555976838,7.8867655462734785,15.845398948116838,15.146533749851573,13.923733130569875,14.000241320068383]},"percminscc":{"releases":["cc-main-2017-feb-mar-apr","cc-main-2017-may-jun-jul","cc-main-2017-aug-sep-oct","cc-main-2017-18-nov-dec-jan","cc-main-2018-jan","cc-main-2018-feb-mar-apr","cc-main-2018-may-jun-jul","cc-main-2018-aug-sep-oct","cc-main-2018-19-nov-dec-jan","cc-main-2019-feb-mar-apr","cc-main-2019-may-jun-jul","cc-main-2019-aug-sep-oct","cc-main-2019-20-nov-dec-jan","cc-main-2020-feb-mar-may","cc-main-2020-jul-aug-sep","cc-main-2020-21-oct-nov-jan","cc-main-2021-feb-apr-may","cc-main-2021-jun-jul-sep","cc-main-2021-22-oct-nov-jan","cc-main-2022-may-jun-aug","cc-main-2022-23-sep-nov-jan","cc-main-2023-mar-may-oct","cc-main-2023-may-sep-nov","cc-main-2023-24-sep-nov-feb","cc-main-2024-nov-feb-apr","cc-main-2024-feb-apr-may","cc-main-2024-apr-may-jun","cc-main-2024-may-jun-jul","cc-main-2024-jun-jul-aug","cc-main-2024-jul-aug-sep","cc-main-2024-aug-sep-oct","cc-main-2024-sep-oct-nov","cc-main-2024-oct-nov-dec","cc-main-2024-25-nov-dec-jan","cc-main-2024-25-dec-jan-feb","cc-main-2025-jan-feb-mar","cc-main-2025-feb-mar-apr","cc-main-2025-mar-apr-may","cc-main-2025-apr-may-jun","cc-main-2025-may-jun-jul","cc-main-2025-jun-jul-aug","cc-main-2025-jul-aug-sep","cc-main-2025-aug-sep-oct","cc-main-2025-sep-oct-nov","cc-main-2025-oct-nov-dec","cc-main-2025-26-nov-dec-jan","cc-main-2025-26-dec-jan-feb"],"labels":["cc-main-2017-feb-mar-apr","May '17","Aug '17","Nov '17","Jan '18","Feb '18","May '18","Aug '18","Nov '18","Mar '19","Jun '19","Sep '19","Nov '19","Mar '20","Jul '20","Nov '20","Mar '21","Jun '21","Oct '21","May '22","Oct '22","Oct '23","Dec '23","Mar '24","Apr '24","May '24","Jun '24","Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Feb '25","Feb '25","Mar '25","May '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26"],"domain":[null,null,null,1.0561745554051692e-06,1.4211149601851903e-06,1.021317364995479e-06,1.08629823681521e-06,1.1473069630793866e-06,1.110720779146635e-06,1.1018355776383483e-06,1.1330377713663702e-06,1.0781922834101731e-06,1.1649508552084796e-06,1.0990981152577591e-06,1.1287724110142993e-06,1.1640273413726106e-06,1.139604672050949e-06,1.138034905283119e-06,1.107462170919554e-06,1.098079023849914e-06,1.1351641677257275e-06,1.0615977553661987e-06,1.064479652061626e-06,9.869407408999672e-07,8.78283463827373e-07,7.828004524931048e-07,5.767282226385021e-07,6.134850391857434e-07,6.262730526335343e-07,1.0485544130797936e-06,1.0414386241529342e-06,1.0200830482252215e-06,1.012887083915102e-06,9.923982492586438e-07,9.391596418308092e-07,7.39897383779823e-07,6.364434643101949e-07,6.404328875455054e-07,6.179824882673089e-07,4.773328564587164e-07,4.81787347033782e-07,5.417498932197417e-07,1.0233616895259402e-06,9.93418730057802e-07,8.243710597021227e-07,8.176959410235822e-07,7.450317594373508e-07],"host":[2.57860549432601e-07,7.653090817742505e-08,null,3.6266540166653516e-08,1.2905162913034417e-07,4.6728399386874435e-08,1.128121806632653e-07,1.1070167726768069e-07,2.454954916029544e-07,2.0315393477053017e-07,2.2451891249316339e-07,1.2190598882236186e-07,8.08530351609661e-08,1.0785940007318152e-07,1.856765882475027e-07,2.040011775029566e-07,1.943369516561122e-07,1.3063286514109506e-07,2.598418936911355e-07,2.2264211634796986e-07,3.079730976629567e-07,2.640378655435594e-07,3.133576716983511e-07,2.870588430899391e-07,2.982696643030407e-07,2.970930108435443e-07,2.690461119153587e-07,2.761146304467152e-07,2.765116264318194e-07,3.262127441558856e-07,3.334234065552029e-07,3.352957568093975e-07,3.524799738414742e-07,3.600641073979632e-07,3.740223243452777e-07,3.409749885878229e-07,3.234434169121473e-07,3.059944433857037e-07,2.69102414520607e-07,2.07620148606945e-07,1.4470528925022334e-07,1.5906917149327868e-07,2.13491671053707e-07,4.243435507112948e-07,3.987983010793576e-07,3.579661050343143e-07,3.4649523071317373e-07]}};
+</script>
 
         <div class="chart-container">
             <h4 id="nodes">
                 <a href="#nodes">nodes</a>
             </h4>
-            <a href="./plots/nodes.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/nodes.png?version=cc-main-2025-26-dec-jan-feb" alt="nodes Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-nodes"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-nodes"></div>
             <p>The total number of unique nodes (e.g., domains, hosts, or pages) in the graph. Each node represents an entity in the web graph.</p>
         </div>
 
@@ -1072,9 +313,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="arcs">
                 <a href="#arcs">arcs</a>
             </h4>
-            <a href="./plots/arcs.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/arcs.png?version=cc-main-2025-26-dec-jan-feb" alt="arcs Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-arcs"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-arcs"></div>
             <p>The total number of directed edges (or arcs) in the graph, representing links between nodes.</p>
         </div>
 
@@ -1082,9 +324,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="successoravggap">
                 <a href="#successoravggap">successoravggap</a>
             </h4>
-            <a href="./plots/successoravggap.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/successoravggap.png?version=cc-main-2025-26-dec-jan-feb" alt="successoravggap Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-successoravggap"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-successoravggap"></div>
             <p>The average gap between successive nodes in the adjacency list of the graph. This reflects the ordering and clustering of nodes in the graph.</p>
         </div>
 
@@ -1092,9 +335,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="avglocality">
                 <a href="#avglocality">avglocality</a>
             </h4>
-            <a href="./plots/avglocality.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/avglocality.png?version=cc-main-2025-26-dec-jan-feb" alt="avglocality Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-avglocality"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-avglocality"></div>
             <p>A measure of the locality of edges in the graph, indicating how closely related the linked nodes are in terms of graph structure.</p>
         </div>
 
@@ -1102,9 +346,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="maxoutdegree">
                 <a href="#maxoutdegree">maxoutdegree</a>
             </h4>
-            <a href="./plots/maxoutdegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/maxoutdegree.png?version=cc-main-2025-26-dec-jan-feb" alt="maxoutdegree Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-maxoutdegree"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-maxoutdegree"></div>
             <p>The highest number of outgoing edges (links) from a single node in the graph. This identifies the most connected node in terms of outlinks.</p>
         </div>
 
@@ -1112,9 +357,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="dangling">
                 <a href="#dangling">dangling</a>
             </h4>
-            <a href="./plots/dangling.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/dangling.png?version=cc-main-2025-26-dec-jan-feb" alt="dangling Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-dangling"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-dangling"></div>
             <p>The total number of dangling nodes in the graph, which are nodes (vertices) with zero outgoing edges (arcs).</p>
         </div>
 
@@ -1122,29 +368,32 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="percdangling">
                 <a href="#percdangling">percdangling</a>
             </h4>
-            <a href="./plots/percdangling.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/percdangling.png?version=cc-main-2025-26-dec-jan-feb" alt="percdangling Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-percdangling"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-percdangling"></div>
             <p>The percentage of nodes in the graph that are dangling nodes (see above).</p>
         </div>
 
         <div class="chart-container">
-            <h4 id="avgoutdegree">
-                <a href="#avgoutdegree">avgoutdegree</a>
+            <h4 id="avgdegree">
+                <a href="#avgdegree">avgdegree</a>
             </h4>
-            <a href="./plots/avgoutdegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/avgoutdegree.png?version=cc-main-2025-26-dec-jan-feb" alt="avgoutdegree Plot">
-            </a>
-            <p>The average number of outgoing edges per node. This provides an overview of the graph's overall connectivity.</p>
+            <div class="chart-wrapper">
+                <canvas id="chart-avgdegree"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-avgdegree"></div>
+            <p>The average number of edges per node (arcs divided by nodes). In a directed graph, the average indegree and average outdegree are equal, so this single value represents both.</p>
         </div>
 
         <div class="chart-container">
             <h4 id="successoravglogdelta">
                 <a href="#successoravglogdelta">successoravglogdelta</a>
             </h4>
-            <a href="./plots/successoravglogdelta.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/successoravglogdelta.png?version=cc-main-2025-26-dec-jan-feb" alt="successoravglogdelta Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-successoravglogdelta"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-successoravglogdelta"></div>
             <p>The average logarithmic difference between successive node IDs in the adjacency list. This reflects the dispersion of node IDs in the graph structure.</p>
         </div>
 
@@ -1152,29 +401,21 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="maxindegree">
                 <a href="#maxindegree">maxindegree</a>
             </h4>
-            <a href="./plots/maxindegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/maxindegree.png?version=cc-main-2025-26-dec-jan-feb" alt="maxindegree Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-maxindegree"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-maxindegree"></div>
             <p>The highest number of incoming edges (links) to a single node in the graph. It identifies the most referenced or linked-to node.</p>
-        </div>
-
-        <div class="chart-container">
-            <h4 id="avgindegree">
-                <a href="#avgindegree">avgindegree</a>
-            </h4>
-            <a href="./plots/avgindegree.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/avgindegree.png?version=cc-main-2025-26-dec-jan-feb" alt="avgindegree Plot">
-            </a>
-            <p>The average number of incoming edges per node. This is equal to avgoutdegree in a balanced directed graph.</p>
         </div>
 
         <div class="chart-container">
             <h4 id="sccs">
                 <a href="#sccs">sccs</a>
             </h4>
-            <a href="./plots/sccs.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/sccs.png?version=cc-main-2025-26-dec-jan-feb" alt="sccs Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-sccs"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-sccs"></div>
             <p>The total number of strongly connected components (SCCs) in the graph. SCCs are subgraphs in which every node is reachable from every other node within the subgraph.</p>
         </div>
 
@@ -1182,9 +423,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="maxsccsize">
                 <a href="#maxsccsize">maxsccsize</a>
             </h4>
-            <a href="./plots/maxsccsize.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/maxsccsize.png?version=cc-main-2025-26-dec-jan-feb" alt="maxsccsize Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-maxsccsize"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-maxsccsize"></div>
             <p>The size (number of nodes) of the largest strongly connected component (SCC) in the graph. This indicates the largest cluster of nodes that are mutually reachable.</p>
         </div>
 
@@ -1192,9 +434,10 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="percmaxscc">
                 <a href="#percmaxscc">percmaxscc</a>
             </h4>
-            <a href="./plots/percmaxscc.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/percmaxscc.png?version=cc-main-2025-26-dec-jan-feb" alt="percmaxscc Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-percmaxscc"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-percmaxscc"></div>
             <p>The percentage of nodes in the graph that belong to the largest strongly connected component (SCC). It shows how dominant the largest SCC is in the overall graph.</p>
         </div>
 
@@ -1202,49 +445,98 @@ curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \
             <h4 id="percminscc">
                 <a href="#percminscc">percminscc</a>
             </h4>
-            <a href="./plots/percminscc.png?version=cc-main-2025-26-dec-jan-feb" target="_blank">
-                <img src="./plots/percminscc.png?version=cc-main-2025-26-dec-jan-feb" alt="percminscc Plot">
-            </a>
+            <div class="chart-wrapper">
+                <canvas id="chart-percminscc"></canvas>
+            </div>
+            <div class="chart-range-slider" id="slider-percminscc"></div>
             <p>The percentage of nodes in the graph that belong to the smallest strongly connected components (SCCs) (typically isolated nodes or trivial SCCs). This indicates the prevalence of disconnected or minimally connected components.</p>
         </div>
-
-            <div>
-                <h3 id='related-reading'><a href="#related-reading">Related Reading</a></h3>
-                <ul>
-                    <li>
-                        <a href='https://arxiv.org/pdf/2012.01946'>Can I Take Your Subdomain? Exploring Related-Domain Attacks in the Modern Web</a>
-                    </li>
-                    <li>
-                        <a href='https://arxiv.org/abs/1802.05435'>Analysis of the Web Graph Aggregated by Host and Pay-Level Domain</a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h3 id='credits'><a href="#credits">Credits</a></h3>
-                <ul>
-                    <li>
-                        <a href="http://webdatacommons.org/" target="_blank">Web Data Commons</a>, for their web graph data set and everything related.
-                    </li>
-                    <li>
-                        <a href="https://about.commonsearch.org/" target="_blank">Common Search</a>; we first used their web graph to expand the crawler frontier, and Common Search's <a href="https://github.com/commonsearch/cosr-back/" target="_blank">cosr-back</a> project was an important source of inspiration how to process our data using PySpark.
-                    </li>
-                    <li>
-                        The authors of the <a href="https://webgraph.di.unimi.it/" target="_blank">WebGraph framework</a>, whose software simplifies the computation of rankings.
-                    </li>
-                    <li>
-                        This project is maintained by <a href="https://github.com/commoncrawl" target="_blank">Common Crawl</a>.  View the project on <a href="https://github.com/commoncrawl/cc-webgraph-statistics" target="_blank">GitHub</a>.
-                    </li>
-                </ul>
-            </div>
-            <a href="#">Back to Top...</a>
+<div class="download"><h2>Download Data</h2>
+<a href="domain.tsv" download class="download-button"><i class="fas fa-download"></i>domain.tsv</a>
+<a href="host.tsv" download class="download-button"><i class="fas fa-download"></i>host.tsv</a>
 </div>
+
+<div class="info-cards">
+    <div class="info-card">
+        <h3 id='related-reading'><a href="#related-reading">Related Reading</a></h3>
+        <ul>
+            <li>
+                <a href='https://arxiv.org/pdf/2012.01946' target='_blank' rel='noopener noreferrer nofollow'>Can I Take Your Subdomain? Exploring Related-Domain Attacks in the Modern Web</a>
+            </li>
+            <li>
+                <a href='https://arxiv.org/abs/1802.05435' target='_blank' rel='noopener noreferrer nofollow'>Analysis of the Web Graph Aggregated by Host and Pay-Level Domain</a>
+            </li>
+            <li>
+                <a href='https://commoncrawl.github.io/cc-examples/?q=Web+Graphs' target='_blank' rel='noopener noreferrer nofollow'>Search for "Web Graphs" on cc-examples</a>
+            </li>
+            <li>
+                <a href='https://index.commoncrawl.org/web-graphs-index.html' target='_blank' rel='noopener noreferrer nofollow'>Web Graphs Index</a>
+            </li>
+        </ul>
+    </div>
+    <div class="info-card">
+        <h3 id='credits'><a href="#credits">Credits</a></h3>
+        <ul>
+            <li>
+                <a href="http://webdatacommons.org/" target="_blank" rel="noopener noreferrer nofollow">Web Data Commons</a>, for their web graph data set and everything related.
+            </li>
+            <li>
+                <a href="https://about.commonsearch.org/" target="_blank" rel="noopener noreferrer nofollow">Common Search</a>; we first used their web graph to expand the crawler frontier, and Common Search's <a href="https://github.com/commonsearch/cosr-back/" target="_blank" rel="noopener noreferrer nofollow">cosr-back</a> project was an important source of inspiration how to process our data using PySpark.
+            </li>
+            <li>
+                The authors of the <a href="https://webgraph.di.unimi.it/" target="_blank" rel="noopener noreferrer nofollow">WebGraph framework</a>, whose software simplifies the computation of rankings.
+            </li>
+            <li>
+                This project is maintained by <a href="https://github.com/commoncrawl" target="_blank" rel="noopener noreferrer nofollow">Common Crawl</a>.  View the project on <a href="https://github.com/commoncrawl/cc-webgraph-statistics" target="_blank" rel="noopener noreferrer nofollow">GitHub</a>.
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+</div>
+</article>
+</main>
+<script>
+document.addEventListener('click',function(e){
+    var d=document.querySelector('.embed-help[open]');
+    if(d && !d.contains(e.target)) d.removeAttribute('open');
+});
+</script>
+<script>window.addEventListener("DOMContentLoaded",function(){if(window.hljs)hljs.highlightAll()});</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+<script src="charts.js" defer></script>
+<script src="domain-lookup.js" defer></script>
+<script src="parallax.js" defer></script>
+
+<a href="#" class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script>
+(function() {
+    var btn = document.getElementById('back-to-top');
+    if (!btn) return;
+    var shown = false;
+    window.addEventListener('scroll', function() {
+        var shouldShow = window.scrollY > 600;
+        if (shouldShow !== shown) {
+            shown = shouldShow;
+            btn.classList.toggle('visible', shown);
+        }
+    }, { passive: true });
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+
 <footer class="cc-footer">
     <div class="cc-footer-inner">
         <div class="cc-footer-info">
-            <span><a href="https://commoncrawl.org" target="_blank" rel="noopener noreferrer">Common Crawl Foundation</a> is a California 501(c)(3) registered non-profit organization. Hosting of Common Crawl data is covered by <a href="https://aws.amazon.com/opendata/open-data-sponsorship-program/" target="_blank" rel="noopener noreferrer">Amazon Web Services' Open Data Sponsorship Program</a>.</span>
+            <span><a href="https://commoncrawl.org" target="_blank" rel="noopener noreferrer nofollow">Common Crawl Foundation</a> is a California 501(c)(3) registered non-profit organization. Hosting of Common Crawl data is covered by <a href="https://aws.amazon.com/opendata/open-data-sponsorship-program/" target="_blank" rel="noopener noreferrer nofollow">Amazon Web Services' Open Data Sponsorship Program</a>.</span>
             <div class="cc-footer-links">
-                <a href="https://commoncrawl.org/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>
-                <a href="https://commoncrawl.org/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy</a>
+                <a href="https://commoncrawl.org/terms-of-use" target="_blank" rel="noopener noreferrer nofollow">Terms of Use</a>
+                <a href="https://commoncrawl.org/privacy-policy" target="_blank" rel="noopener noreferrer nofollow">Privacy</a>
             </div>
         </div>
     </div>
