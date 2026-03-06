@@ -36,6 +36,15 @@ Built web page can be found in `docs/index.html`.
 You may need to install `JSON::XS` via [`cpanm`](https://github.com/miyagawa/cpanminus). You may also wish to use a Python environment in order for the Makefile's `pip install` to do its thing.
 
 > [!TIP]
+> **Recommended:** Create a virtual environment before running `make`, especially on macOS where the system Python may not allow `pip install`:
+> ```bash
+> cd src
+> python3 -m venv .venv
+> source .venv/bin/activate
+> make
+> ```
+
+> [!TIP]
 > If you encounter the message:
 > ```
 > Can't verify SSL peers without knowing which Certificate Authorities to trust
