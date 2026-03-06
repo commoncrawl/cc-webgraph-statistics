@@ -45,6 +45,14 @@ You may need to install `JSON::XS` via [`cpanm`](https://github.com/miyagawa/cpa
 > cpanm LWP::Protocol::https IO::Socket::SSL Mozilla::CA
 > ```
 
+> [!TIP]
+> **macOS users:** You may need to install Perl dependencies via Homebrew:
+> ```bash
+> brew install ca-certificates cpanminus
+> cpanm LWP::Protocol::https IO::Socket::SSL Mozilla::CA
+> export PERL_LWP_SSL_CA_FILE="$(brew --prefix)/etc/ca-certificates/cert.pem"
+> ```
+
 ### Local development
 
 If you are running this locally, you may see "No data available" on the rank tables unless you serve the site with a local HTTP server.
