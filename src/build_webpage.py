@@ -451,7 +451,7 @@ for release in reversed(releases):
 html_content += """            </select>
             <div class="search-container" id="rank-search-container">
                 <div class="search-input-wrap">
-                    <input type="text" class="search-input" id="rank-search-input" placeholder="Search table..." autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" disabled>
+                    <input type="text" class="search-input" id="rank-search-input" placeholder="Filter domains (e.g. youtube|vimeo)" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" disabled>
                     <button type="button" class="search-clear" id="rank-search-clear" aria-label="Clear search">&times;</button>
                 </div>
                 <span class="search-count" id="rank-search-count"></span>

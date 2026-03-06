@@ -226,15 +226,21 @@ function updatePanelDisplay(state) {
 }
 
 function applySearch(term) {
+    var terms = term ? term.split('|').map(function(t) { return t.trim(); }).filter(Boolean) : [];
     ['domain', 'host'].forEach(ft => {
         const state = panelState[ft];
         if (!state) return;
-        if (!term) {
+        if (!terms.length) {
             state.displayedRows = state.rowsList;
         } else {
-            state.displayedRows = state.rowsList.filter(row =>
-                Array.from(row.cells).some(c => c.textContent.toLowerCase().includes(term))
-            );
+            state.displayedRows = state.rowsList.filter(function(row) {
+                // Only search SURT columns (domain/host name columns)
+                return Array.from(row.cells).some(function(td) {
+                    if (td.dataset.surt === undefined) return false;
+                    var text = td.textContent.toLowerCase();
+                    return terms.some(function(t) { return text.indexOf(t) !== -1; });
+                });
+            });
         }
         state.currentPage = 1;
         updatePanelDisplay(state);
