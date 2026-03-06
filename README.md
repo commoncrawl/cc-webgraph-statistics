@@ -11,20 +11,13 @@ cd src
 make
 ```
 
+(For more details when running on Mac, see below.)
+
 ## Updating
 
 ```
 cd src
 make update
-```
-
-## Modifications
-
-Sometimes you may want to generate the HTML without generating the plots.  You can do this with:
-
-```
-cd src
-make noplot
 ```
 
 ## Notes
