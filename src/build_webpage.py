@@ -439,20 +439,23 @@ html_content += """            </select>
 
 html_content += "<p>These ranks can be found by running the following:</p>"
 
-html_content += """<pre><code class="bash"># Retrieve latest Web Graph release (optional)
-curl -s https://index.commoncrawl.org/graphinfo.json | jq '.[0].id'
-# Define environment variables for release and graph level
-export RELEASE="{release}"  # Desired release (e.g., cc-main-2017-18-nov-dec-jan)
-export GRAPH_LEVEL="{graph_level}"  # Desired graph level (e.g., domain or host)
+html_content += """<pre><code class="bash">INDEX_URL="https://index.commoncrawl.org/graphinfo.json"
+DATA_BASE_URL="https://data.commoncrawl.org/projects/hyperlinkgraph"
 
-# Fetch the top 1000 ranks for the specified release and graph level
-curl -s https://data.commoncrawl.org/projects/hyperlinkgraph/$RELEASE/ \\
-        $GRAPH_LEVEL/$RELEASE-$GRAPH_LEVEL-ranks.txt.gz \\
-        | zcat \\
-        | head -n 1001
+GRAPH_LEVEL="domain"  # "domain" or "host"
+RESULTS=1000  # how many results to retrieve
+
+GRAPH_RELEASE="$(curl -fsSL "$INDEX_URL" | jq -r '.[0].id')"
+# ... or a specific release e.g. "cc-main-2025-26-dec-jan-feb"
+
+curl -fsSL \\
+  "$DATA_BASE_URL/$GRAPH_RELEASE/$GRAPH_LEVEL/$GRAPH_RELEASE-$GRAPH_LEVEL-ranks.txt.gz" \\
+  2>/dev/null | gzip -dc | head -n "$((RESULTS + 1))"
 </code></pre>"""
 
-html_content += "<br><p>Each of these ranks files is multiple GiB, so piping to <code>zcat</code> or <code>gunzip</code> allows you to use <code>head</code> or <code>tail</code> to avoid downloading the whole thing.</p>\n"
+html_content += """<p style="background: #e2e8f0; border-radius: 6px; padding: 10px 14px; margin: 6px 0 12px; font-size: 0.93em; color: #3a5068;">
+These rank files are multiple GiB each, so we pipe to <code>zcat</code> or <code>gunzip</code> and use <code>head</code> to peek at the first few lines without downloading the whole file.<br><strong>Note:</strong> <code>head</code> can stop the stream early, but <code>tail</code> on a gzipped stream generally cannot.
+</p><br>\n"""
 
 html_content += '<div><h4 id="What-Are-These-Ranks">What Are These Ranks?</h4>\n'
 
