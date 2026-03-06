@@ -456,6 +456,9 @@ html_content += """            </select>
                 </div>
                 <span class="search-count" id="rank-search-count"></span>
             </div>
+            <label class="surt-toggle" id="surt-toggle" title="SURT (Sort-friendly URI Rewriting Transform) shows domains in reversed notation, e.g. com.google instead of google.com">
+                <input type="checkbox" id="surt-checkbox"><span class="surt-slider"><span class="surt-label">SURT</span></span>
+            </label>
         </div>
         <div class="rank-content" id="rank-content">
             <div class="rank-content-inner">

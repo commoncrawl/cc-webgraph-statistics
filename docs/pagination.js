@@ -27,10 +27,25 @@ const HEADER_LABELS = {
     '#harmonicc_val': 'HC Value',
     '#pr_pos': 'PR Rank',
     '#pr_val': 'PR Value',
-    '#host_rev': 'Host (rev)',
+    '#host_rev': 'Host',
     '#n_hosts': 'Hosts',
+    '#domain_rev': 'Domain'
+};
+
+const SURT_HEADER_LABELS = {
+    '#host_rev': 'Host (rev)',
     '#domain_rev': 'Domain (rev)'
 };
+
+// Columns that contain reversed (SURT) domain names
+const SURT_COLUMNS = ['#host_rev', '#domain_rev'];
+
+function reverseDomain(s) {
+    return s.split('.').reverse().join('.');
+}
+
+// Track whether SURT mode is active (default: off = human-friendly)
+var surtMode = false;
 
 function buildTable(container, data, fileType) {
     container.innerHTML = '';
@@ -40,6 +55,12 @@ function buildTable(container, data, fileType) {
         return;
     }
 
+    // Identify which column indices contain SURT domain names
+    var surtCols = [];
+    data.header.forEach(function(col, i) {
+        if (SURT_COLUMNS.indexOf(col.toLowerCase()) !== -1) surtCols.push(i);
+    });
+
     const tableWrap = document.createElement('div');
     tableWrap.className = 'table-scroll-wrap';
     const table = document.createElement('table');
@@ -47,7 +68,11 @@ function buildTable(container, data, fileType) {
     const headerRow = document.createElement('tr');
     data.header.forEach(col => {
         const th = document.createElement('th');
-        th.textContent = HEADER_LABELS[col.toLowerCase()] || col;
+        var key = col.toLowerCase();
+        th.textContent = (surtMode && SURT_HEADER_LABELS[key])
+            ? SURT_HEADER_LABELS[key]
+            : (HEADER_LABELS[key] || col);
+        if (SURT_HEADER_LABELS[key]) th.dataset.colKey = key;
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -56,9 +81,13 @@ function buildTable(container, data, fileType) {
     const tbody = document.createElement('tbody');
     data.rows.forEach(row => {
         const tr = document.createElement('tr');
-        row.forEach(cell => {
+        row.forEach(function(cell, i) {
             const td = document.createElement('td');
-            td.textContent = cell;
+            // By default show human-friendly names (reverse SURT)
+            td.textContent = (!surtMode && surtCols.indexOf(i) !== -1)
+                ? reverseDomain(cell) : cell;
+            // Store original SURT value for toggling
+            if (surtCols.indexOf(i) !== -1) td.dataset.surt = cell;
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -80,7 +109,8 @@ function buildTable(container, data, fileType) {
         rowsPerPage: 10,
         table: table,
         tbody: tbody,
-        controls: controls
+        controls: controls,
+        surtCols: surtCols
     };
     panelState[fileType] = state;
 
@@ -294,6 +324,35 @@ document.addEventListener('DOMContentLoaded', () => {
             updateClearBtn();
             applySearch('');
             searchInput.focus();
+        });
+    }
+
+    // SURT toggle
+    var surtCheckbox = document.getElementById('surt-checkbox');
+    if (surtCheckbox) {
+        surtCheckbox.addEventListener('change', function() {
+            surtMode = this.checked;
+            ['domain', 'host'].forEach(function(ft) {
+                var state = panelState[ft];
+                if (!state) return;
+                // Update column headers
+                state.table.querySelectorAll('th[data-col-key]').forEach(function(th) {
+                    var key = th.dataset.colKey;
+                    th.textContent = surtMode
+                        ? (SURT_HEADER_LABELS[key] || HEADER_LABELS[key] || key)
+                        : (HEADER_LABELS[key] || key);
+                });
+                // Update cell values
+                state.rowsList.forEach(function(tr) {
+                    Array.from(tr.cells).forEach(function(td) {
+                        if (td.dataset.surt !== undefined) {
+                            td.textContent = surtMode
+                                ? td.dataset.surt
+                                : reverseDomain(td.dataset.surt);
+                        }
+                    });
+                });
+            });
         });
     }
 
