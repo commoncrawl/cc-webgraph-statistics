@@ -282,8 +282,9 @@
         var raw2 = input2 ? input2.value.trim() : '';
 
         if (!raw1) {
-            msg.textContent = 'Please enter at least one domain name.';
-            msg.className = 'domain-search-msg error';
+            msg.textContent = '';
+            msg.className = 'domain-search-msg';
+            if (wrap) wrap.style.display = 'none';
             return;
         }
 
@@ -359,6 +360,7 @@
             input.value = '';
             toggle();
             input.focus();
+            doSearch();
         });
     }
 
@@ -375,6 +377,20 @@
 
         setupDomainClear(input1);
         setupDomainClear(input2);
+
+        /* Auto-fill from URL params: ?domain=x&compare=y */
+        var params = new URLSearchParams(window.location.search);
+        var d = params.get('domain');
+        var c = params.get('compare');
+        if (d && input1) {
+            input1.value = d.trim();
+            input1.dispatchEvent(new Event('input'));
+            if (c && input2) {
+                input2.value = c.trim();
+                input2.dispatchEvent(new Event('input'));
+            }
+            doSearch();
+        }
     }
 
     if (document.readyState === 'loading') {

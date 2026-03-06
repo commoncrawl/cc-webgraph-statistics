@@ -373,6 +373,24 @@ console.log("%c" +
 console.log("%cCommon Crawl\\n%cLike what you see? We're hiring.\\nhttps://commoncrawl.org/jobs",
 "font-weight:bold;color:#143171;font-size:12px;","color:#3a5068;font-size:12px;");
 </script>
+<script>
+(function(){
+    var p = new URLSearchParams(window.location.search);
+    if (p.get('embed') === 'domain-lookup') {
+        document.documentElement.classList.add('embed-mode');
+        /* Post height to parent for dynamic iframe resizing */
+        function postHeight() {
+            var h = document.documentElement.scrollHeight;
+            window.parent.postMessage({ccEmbed:'domain-lookup',height:h},'*');
+        }
+        window.addEventListener('DOMContentLoaded', function(){
+            postHeight();
+            new MutationObserver(postHeight).observe(document.body,{childList:true,subtree:true,attributes:true});
+            window.addEventListener('resize', postHeight);
+        });
+    }
+})();
+</script>
 <nav class="cc-header-wrap" aria-label="Site header">
     <header class="cc-header">
         <a href="./">
@@ -508,19 +526,43 @@ html_content += "<br><p>With <a href='https://en.wikipedia.org/wiki/PageRank' ta
 html_content += "<p>PageRank is susceptible to manipulation (e.g., link farming or creating many interconnected spam pages). These artificial links can inflate the importance of a spam node. Harmonic Centrality is better for reducing this spam, because it's harder to 'game', or exploit through artificial link patterns.</p></div>\n"
 
 # --- Domain Lookup ---
+html_content += '<h2 id="Domain-Lookup"><a href="#Domain-Lookup">Domain Lookup</a></h2>\n'
+
 html_content += """
-<div class="domain-lookup" id="domain-lookup">
-    <h4 id="Domain-Lookup"><a href="#Domain-Lookup">Domain Lookup</a></h4>
+<div class="domain-lookup" id="domain-lookup-box">
+    <div class="embed-bar">
+        <span class="embed-attribution">Domain rankings from the <a href="https://commoncrawl.github.io/cc-webgraph-statistics/" target="_blank" rel="noopener noreferrer">Common Crawl Web Graph</a> &middot;</span>
+        <span class="embed-bar-updated">Updated """ + last_updated + """</span>
+        <details class="embed-help">
+            <summary title="Embed this on your site"><i class="fas fa-code"></i></summary>
+            <div class="embed-help-content">
+                <p>Embed this widget on your own site with an <code>iframe</code>. It resizes automatically to fit the content:</p>
+<pre><code>&lt;iframe id="cc-domain-lookup"
+  src="https://commoncrawl.github.io/cc-webgraph-statistics/?embed=domain-lookup&amp;domain=example.com"
+  width="100%" height="300" frameborder="0"
+  style="border:1px solid #e2e8f0;border-radius:8px;"&gt;
+&lt;/iframe&gt;
+&lt;script&gt;
+window.addEventListener('message', function(e) {
+  if (e.data &amp;&amp; e.data.ccEmbed === 'domain-lookup') {
+    document.getElementById('cc-domain-lookup').style.height = e.data.height + 'px';
+  }
+});
+&lt;/script&gt;</code></pre>
+                <p>To compare two domains, add <code>&amp;compare=other.com</code> to the URL.</p>
+            </div>
+        </details>
+    </div>
     <p>Search for a domain to see its Harmonic Centrality and PageRank over time. Enter a second domain to compare them side by side. Only domains that appear in the top 1,000 for at least one release are available.</p>
     <div class="domain-search-row">
         <div class="search-input-wrap">
             <input type="text" id="domain-search-input" class="domain-search-input"
-                   placeholder="e.g. wikipedia.org" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                   placeholder="Primary domain (e.g. wikipedia.org)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
             <button type="button" class="search-clear domain-clear" aria-label="Clear search">&times;</button>
         </div>
         <div class="search-input-wrap">
             <input type="text" id="domain-search-input-2" class="domain-search-input"
-                   placeholder="compare with… (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                   placeholder="Secondary domain (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
             <button type="button" class="search-clear domain-clear" aria-label="Clear search">&times;</button>
         </div>
         <button type="button" id="domain-search-btn" class="domain-search-btn">
@@ -549,11 +591,6 @@ for col in descriptions.keys():
 html_content += '</ul>\n</div></div>\n'
 
 html_content += '<p>The following charts are interactive Web Graph <a href="https://webgraph.di.unimi.it/docs/it/unimi/dsi/webgraph/Stats.html" target="_blank" rel="noopener noreferrer nofollow">statistics</a> for all previous releases. Hover for values, click legend items to toggle series, and drag the range bar to zoom.</p>\n'
-
-html_content += '<div class="download"><h2>Download Data</h2>\n'
-html_content += '<a href="domain.tsv" download class="download-button"><i class="fas fa-download"></i>domain.tsv</a>\n'
-html_content += '<a href="host.tsv" download class="download-button"><i class="fas fa-download"></i>host.tsv</a>\n'
-html_content += '</div>\n'
 
 # --- Embed chart data as a single JSON object ---
 html_content += '<script>\nwindow.CHART_DATA = '
@@ -586,6 +623,11 @@ for col in descriptions.keys():
             <p>{description}</p>
         </div>
 """
+
+html_content += '<div class="download"><h2>Download Data</h2>\n'
+html_content += '<a href="domain.tsv" download class="download-button"><i class="fas fa-download"></i>domain.tsv</a>\n'
+html_content += '<a href="host.tsv" download class="download-button"><i class="fas fa-download"></i>host.tsv</a>\n'
+html_content += '</div>\n'
 
 html_content += """
 <div class="info-cards">
@@ -629,6 +671,14 @@ html_content += """
 </article>
 </main>
 """
+
+# --- Close embed popover on outside click ---
+html_content += """<script>
+document.addEventListener('click',function(e){
+    var d=document.querySelector('.embed-help[open]');
+    if(d && !d.contains(e.target)) d.removeAttribute('open');
+});
+</script>\n"""
 
 # --- Syntax highlighting (deferred, so call after load) ---
 html_content += '<script>window.addEventListener("DOMContentLoaded",function(){if(window.hljs)hljs.highlightAll()});</script>\n'
