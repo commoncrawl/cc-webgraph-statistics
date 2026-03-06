@@ -5,6 +5,7 @@ import markdown
 import os
 import pandas as pd
 import re
+import shutil
 import subprocess
 import urllib.request
 from tqdm import tqdm
@@ -263,6 +264,12 @@ def embed_file(file_path):
     except Exception as e:
         print(f"Error reading {file_path}: {e}")
 
+def copy_to_docs(file_path, dest_name=None):
+    """Copy a source file to ../docs/ for external linking."""
+    dest = os.path.join("../docs", dest_name or os.path.basename(file_path))
+    shutil.copy2(file_path, dest)
+    print(f"=> | Copied {file_path} -> {dest}")
+
 
 parser = argparse.ArgumentParser(description="Generate web statistics page")
 args = parser.parse_args()
@@ -323,44 +330,50 @@ html_content = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Graph Statistics</title>
+    <title>Common Crawl Web Graph Statistics</title>
+    <meta name="description" content="Interactive visualisations, domain and host rankings, and graph metrics from the Common Crawl Web Graph dataset. Explore PageRank, harmonic centrality, and more across all releases.">
+    <link rel="canonical" href="https://commoncrawl.github.io/cc-webgraph-statistics/">
     <link rel="icon" href="img/favicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" defer></script>
 
     <meta property="og:title"  content="Common Crawl Web Graph Statistics">
     <meta name="twitter:title" content="Common Crawl Web Graph Statistics">
-    <meta property="og:description"  content="Visualisations and metrics from the Common Crawl Web Graph dataset">
-    <meta name="twitter:description" content="Visualisations and metrics from the Common Crawl Web Graph dataset">
+    <meta property="og:description"  content="Interactive visualisations, domain and host rankings, and graph metrics from the Common Crawl Web Graph dataset.">
+    <meta name="twitter:description" content="Interactive visualisations, domain and host rankings, and graph metrics from the Common Crawl Web Graph dataset.">
     <meta property="og:image"  content="https://commoncrawl.github.io/cc-webgraph-statistics/img/masthead.jpg">
     <meta name="twitter:image" content="https://commoncrawl.github.io/cc-webgraph-statistics/img/masthead.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:url" content="https://commoncrawl.github.io/cc-webgraph-statistics/">
     <meta property="og:type" content="website">
 
-    <style>
+    <link rel="stylesheet" href="style.css">
+    <script src="pagination.js" defer></script>
 """
 
-html_content += embed_file('style.css')
+copy_to_docs('style.css')
+copy_to_docs('pagination.js')
 
-html_content += """
-    </style>
-    <script>
-"""
-html_content += embed_file('pagination.js')
-html_content += """
-    </script>
-"""
 html_content += """
 </head>
 <body autocapitalize="off">
-<div class="cc-header-wrap">
+<script>
+console.log("%c" +
+"        ,,,        \\n" +
+"       (o o)       \\n" +
+"   ooO--(_)--Ooo   \\n" +
+"                   \\n" +
+" Oh hello, curious \\n" +
+"  Web Graph user!  \\n",
+"font-family:monospace;color:#3a5068;font-size:12px;");
+console.log("%cCommon Crawl%cWe crawl the web so you don't have to.\\nhttps://commoncrawl.org/faq",
+"font-weight:bold;color:#e8603c;font-size:12px;","color:#3a5068;font-size:12px;");
+</script>
+<nav class="cc-header-wrap" aria-label="Site header">
     <header class="cc-header">
         <a href="./">
           <img src="img/logo.svg" alt="Common Crawl" class="cc-logo">
@@ -370,13 +383,14 @@ html_content += """
             <p>Visualisations and metrics from the Common Crawl Web Graph dataset</p>
         </div>
     </header>
-</div>
+</nav>
 """
 
 html_content += f"""
+<main>
 <div class="cc-hero">
     <div class="cc-hero-inner">
-        <img class="full-width-image" src="img/masthead.webp" alt="decorative" draggable="false">
+        <img class="full-width-image" src="img/masthead.webp" alt="" draggable="false">
     </div>
 </div>
 <div class="update-bar">
@@ -389,6 +403,8 @@ html_content += f"""
 """
 
 html_content += """
+<noscript><p style="padding:20px;text-align:center;">This page requires JavaScript for interactive charts and tables. Please enable JavaScript to view the full content.</p></noscript>
+<article>
 <div class="cc-twrap">
 """
 
@@ -453,7 +469,7 @@ curl -fsSL \\
   2>/dev/null | gzip -dc | head -n "$((RESULTS + 1))"
 </code></pre>"""
 
-html_content += """<p style="background: #e2e8f0; border-radius: 6px; padding: 10px 14px; margin: 6px 0 12px; font-size: 0.93em; color: #3a5068;">
+html_content += """<p style="background: #e9eff6; border-radius: 6px; padding: 10px 14px; margin: 6px 0 12px; font-size: 0.93em; color: #3a5068;">
 These rank files are multiple GiB each, so we pipe to <code>zcat</code> or <code>gunzip</code> and use <code>head</code> to peek at the first few lines without downloading the whole file.<br><strong>Note:</strong> <code>head</code> can stop the stream early, but <code>tail</code> on a gzipped stream generally cannot.
 </p><br>\n"""
 
@@ -610,22 +626,22 @@ html_content += """
 </div>
 </div>
 </div>
+</article>
+</main>
 """
 
-# --- Charts JS (loaded after all canvas elements exist) ---
-html_content += '<script>\n'
-html_content += embed_file('charts.js')
-html_content += '\n</script>\n'
+# --- Syntax highlighting (deferred, so call after load) ---
+html_content += '<script>window.addEventListener("DOMContentLoaded",function(){if(window.hljs)hljs.highlightAll()});</script>\n'
 
-# --- Domain Lookup JS ---
-html_content += '<script>\n'
-html_content += embed_file('domain-lookup.js')
-html_content += '\n</script>\n'
+# --- Chart.js + app scripts (all deferred, execute in order after parsing) ---
+html_content += '<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>\n'
+html_content += '<script src="charts.js" defer></script>\n'
+html_content += '<script src="domain-lookup.js" defer></script>\n'
+html_content += '<script src="parallax.js" defer></script>\n'
 
-# --- Hero parallax ---
-html_content += '<script>\n'
-html_content += embed_file('parallax.js')
-html_content += '\n</script>\n'
+copy_to_docs('charts.js')
+copy_to_docs('domain-lookup.js')
+copy_to_docs('parallax.js')
 
 # --- Floating back-to-top button ---
 html_content += """
