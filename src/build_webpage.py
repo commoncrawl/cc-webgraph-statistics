@@ -370,7 +370,7 @@ console.log("%c" +
 " Oh hello, curious \\n" +
 "  Web Graph user!  \\n",
 "font-family:monospace;color:#143171;font-size:12px;");
-console.log("%cCommon Crawl\\n%cWe crawl the web so you don't have to.\\nhttps://commoncrawl.org/faq",
+console.log("%cCommon Crawl\\n%cLike what you see? We're hiring.\\nhttps://commoncrawl.org/jobs",
 "font-weight:bold;color:#143171;font-size:12px;","color:#3a5068;font-size:12px;");
 </script>
 <nav class="cc-header-wrap" aria-label="Site header">
