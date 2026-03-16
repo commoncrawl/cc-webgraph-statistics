@@ -456,8 +456,8 @@ html_content += """            </select>
                 </div>
                 <span class="search-count" id="rank-search-count"></span>
             </div>
-            <label class="surt-toggle" id="surt-toggle" title="SURT (Sort-friendly URI Rewriting Transform) shows domains in reversed notation, e.g. com.google instead of google.com">
-                <input type="checkbox" id="surt-checkbox"><span class="surt-slider"><span class="surt-label">SURT</span></span>
+            <label class="surt-toggle" id="surt-toggle" title="Show domains in reversed notation, e.g. com.google instead of google.com">
+                <input type="checkbox" id="surt-checkbox" checked><span class="surt-slider"><span class="surt-label">REV</span></span>
             </label>
         </div>
         <div class="rank-content" id="rank-content">
@@ -648,6 +648,9 @@ html_content += """
             </li>
             <li>
                 <a href='https://index.commoncrawl.org/web-graphs-index.html' target='_blank' rel='noopener noreferrer nofollow'>Web Graphs Index</a>
+            </li>
+            <li>
+                <a href='https://github.com/commoncrawl/cc-host-index' target='_blank' rel='noopener noreferrer nofollow'>cc-host-index</a> &mdash; a lookup index for host and domain metadata from the web graph rankings (<a href='https://commoncrawl.org/blog/introducing-the-host-index' target='_blank' rel='noopener noreferrer nofollow'>announcement</a>)
             </li>
         </ul>
     </div>

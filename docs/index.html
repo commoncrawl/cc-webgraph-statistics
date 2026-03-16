@@ -80,7 +80,7 @@ console.log("%cCommon Crawl\n%cLike what you see? We're hiring.\nhttps://commonc
 </div>
 <div class="update-bar">
     <div class="update-info">
-        <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated 2026-03-06</a></span>
+        <span><a href="https://github.com/commoncrawl/cc-webgraph-statistics/commit/main" target="_blank" rel="noopener noreferrer nofollow">Updated 2026-03-16</a></span>
         <span class="update-sep"></span>
         <span>Latest release: <a href="https://data.commoncrawl.org/projects/hyperlinkgraph/cc-main-2025-26-dec-jan-feb/index.html" target="_blank" rel="noopener noreferrer nofollow">cc-main-2025-26-dec-jan-feb</a></span>
     </div>
@@ -164,8 +164,8 @@ console.log("%cCommon Crawl\n%cLike what you see? We're hiring.\nhttps://commonc
                 </div>
                 <span class="search-count" id="rank-search-count"></span>
             </div>
-            <label class="surt-toggle" id="surt-toggle" title="SURT (Sort-friendly URI Rewriting Transform) shows domains in reversed notation, e.g. com.google instead of google.com">
-                <input type="checkbox" id="surt-checkbox"><span class="surt-slider"><span class="surt-label">SURT</span></span>
+            <label class="surt-toggle" id="surt-toggle" title="Show domains in reversed notation, e.g. com.google instead of google.com">
+                <input type="checkbox" id="surt-checkbox" checked><span class="surt-slider"><span class="surt-label">REV</span></span>
             </label>
         </div>
         <div class="rank-content" id="rank-content">
@@ -228,7 +228,7 @@ These rank files are multiple GiB each, so we pipe to <code>zcat</code> or <code
 <div class="domain-lookup" id="domain-lookup-box">
     <div class="embed-bar">
         <span class="embed-attribution">Domain rankings from the <a href="https://commoncrawl.github.io/cc-webgraph-statistics/" target="_blank" rel="noopener noreferrer">Common Crawl Web Graph</a> &middot;</span>
-        <span class="embed-bar-updated">Updated 2026-03-06</span>
+        <span class="embed-bar-updated">Updated 2026-03-16</span>
         <details class="embed-help">
             <summary title="Embed this on your site"><i class="fas fa-code"></i></summary>
             <div class="embed-help-content">
@@ -471,6 +471,9 @@ window.CHART_DATA = {"nodes":{"releases":["cc-main-2017-feb-mar-apr","cc-main-20
             </li>
             <li>
                 <a href='https://index.commoncrawl.org/web-graphs-index.html' target='_blank' rel='noopener noreferrer nofollow'>Web Graphs Index</a>
+            </li>
+            <li>
+                <a href='https://github.com/commoncrawl/cc-host-index' target='_blank' rel='noopener noreferrer nofollow'>cc-host-index</a> &mdash; a lookup index for host and domain metadata from the web graph rankings (<a href='https://commoncrawl.org/blog/introducing-the-host-index' target='_blank' rel='noopener noreferrer nofollow'>announcement</a>)
             </li>
         </ul>
     </div>
