@@ -2,3 +2,4 @@
 src/misc/
 src/cache/
 src/.venv/
+src/cc_webgraph_statistics.egg-info/
