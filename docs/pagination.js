@@ -23,17 +23,17 @@ async function fetchRankData(fileType, release) {
 const panelState = { domain: null, host: null };
 
 const HEADER_LABELS = {
-    '#harmonicc_pos': 'HC Rank',
-    '#harmonicc_val': 'HC Value',
-    '#pr_pos': 'PR Rank',
-    '#pr_val': 'PR Value',
-    '#host_rev': 'Host',
+    '#harmonicc_pos': 'hcrank_pos',
+    '#harmonicc_val': 'hcrank_raw',
+    '#pr_pos': 'prank_pos',
+    '#pr_val': 'prank_raw',
+    '#host_rev': 'URL_HOST_NAME',
     '#n_hosts': 'Hosts',
     '#domain_rev': 'Domain'
 };
 
 const SURT_HEADER_LABELS = {
-    '#host_rev': 'Host (rev)',
+    '#host_rev': 'URL_HOST_NAME_REVERSED',
     '#domain_rev': 'Domain (rev)'
 };
 
@@ -44,8 +44,8 @@ function reverseDomain(s) {
     return s.split('.').reverse().join('.');
 }
 
-// Track whether SURT mode is active (default: off = human-friendly)
-var surtMode = false;
+// Track whether SURT mode is active (default: on = reversed notation)
+var surtMode = true;
 
 function buildTable(container, data, fileType) {
     container.innerHTML = '';
